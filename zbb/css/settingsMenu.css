@@ -1,0 +1,76 @@
+/*
+ * This file contains all of the styling options for the Settings menu
+ */
+
+/*
+ * Checkbox options
+ */
+
+/* Contains checkbox options */
+#settings-checkbox-container {
+	text-align: left;
+	display: inline-block;
+	margin: 0 auto;
+}
+
+/* Label text for checkbox options */
+.settings-label {
+	vertical-align: top;
+	font-weight: normal;
+	margin: 0;
+}
+
+/*
+ * Button options
+ */
+
+/* Holds "Resolution" and "Window Size" labels on left side of menu */
+#settings-headers-container {
+	width: 50%;
+	float: left;
+	text-align: right;
+	margin-top: 20px;
+}
+
+/* Holds options buttons on right side of menu (L,M,H and S,M,L) */
+#settings-buttons-container {
+	width: 50%;
+	float: left;
+	text-align: left;
+	margin-top: 20px;
+}
+
+/* Applied to "Resolution" and "Window Size" labels */
+.settings-btn-group-header {
+	margin-right: 5px;
+}
+
+/* Applied only to "Resolution" label */
+#settings-resolution-header {
+	margin-top: 4px;
+}
+
+/* Applied only to "Window Size" label */
+#settings-window-size-header {
+	margin-top: 20px;
+}
+
+/* Applied to both Resolution and Window Size button groups */
+.settings-btn-group {
+	margin-left: 5px;
+}
+
+/* Applied only to Window Size button group */
+#win-size-btn-group {
+	margin-top: 10px;
+}
+
+/*
+ * Deprecated (unused)
+ */
+
+#advanced-settings {
+	width: 100%;
+	clear: both;
+	text-align: center;
+}

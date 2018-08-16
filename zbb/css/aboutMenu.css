@@ -1,0 +1,46 @@
+/*
+ * This file contains styling for the About menu
+ */
+
+/* p tags containing contributor names */
+.credits-p {
+	margin: 0;
+	color: black;
+	font-weight: bold;
+}
+
+/* Links to contributor websites */
+.credits-p a {
+	color: black;
+}
+
+/* Organization images (VT and NICHD) */
+.credits-img {
+	width: 100%;
+	background: #DDDDDD;
+	padding: 10px;
+}
+
+/* Margin applied to ViBE-Z link for better appearance */
+#vibe-z-link {
+	margin: 0 15px;
+}
+
+/*
+ * Deprecated (unused)
+ */
+
+.credits-div {
+	padding: 0;
+	position: absolute;
+	bottom: 0;
+	width: 94%;
+	left: 3%;
+	padding-bottom: 3%;
+}
+
+.always-bottom {
+	position: absolute;
+	width: 100%;
+	bottom: 0;
+}

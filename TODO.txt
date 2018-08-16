@@ -1,0 +1,23 @@
+TODO:
+- Visibility icons should hide lines in projection windows as well
+- scroll to zoom (z to reset shortcut)
+- Left and right panels adjust to viewport height
+- 100 micron scale bar (changes with zoom) in z window top left
+- Color key in bottom right of z window
+- Allow ctrl-F for find on page (dont jump to text search when control held)
+- Update wiki with new help information
+- Share and load current configurations with URL text codes (selected lines, slice numbers and volume orientation, etc.)
+- Oblique view
+
+Known Bugs:
+- Window already marked once (partial projection) even when it hadn't been clicked
+- color becomes slightly darker in z window when below slice ~120
+- volumes are sometimes stretched after dismissing maximum projection, go away on hover
+- black box appears over window when selecting then deselecting same region (only occurs until huc-cer is deselected, then reselected)
+
+Browser Issues:
+- Cursor changing on mouse down over 3D volume window not working properly in chrome
+- Slider input thumbs look weird/cutoff in edge
+- decimal not working in number inputs in firefox
+- Titles on info popup windows not showing up in edge
+- Popovers acting strangely in firefox (active popover not disappearing when another color button is selected)

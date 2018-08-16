@@ -1,0 +1,35 @@
+/*
+ * This file provides styling for the Zebrafish Brain Browser's Fiji conversion help page
+ */
+
+body {
+	font-family: verdana;
+	background-color: #A0D6FF;
+}
+
+h1, h3 {
+	font-family: "Merriweather", Georgia, serif;
+}
+
+h1 {
+	margin-bottom: 20px;
+}
+
+img {
+	margin: 5px 0;
+}
+
+#header-container {
+	background-color: black;
+	color: white;
+}
+
+#content-container {
+	background-color: white;
+	border: 1px solid black;
+	border-top: none;
+	box-sizing: border-box;
+	width: 90%;
+	padding: 15px;
+	box-shadow: 0 0 15px black;
+}

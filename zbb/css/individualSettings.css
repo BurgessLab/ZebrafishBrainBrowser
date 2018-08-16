@@ -1,0 +1,338 @@
+/*
+ * This file is used for styling the draggable individual settings panel at the bottom of the right side of the screen
+ */
+
+/*
+ * Layout and draggable components
+ */
+
+/* Outermost panel, manages total height */
+#colors-selection {
+	position: absolute;
+	width: 96%;
+	height: 33.333%; /* Starting height of individual settings panel, should be 100 - height of .right-div (see layout.css) */
+	left: 0;
+	bottom: 0;
+	margin: 0 2%;
+	z-index: 2;
+	border-radius: 0 0 15px 15px;
+	border-top: 1px solid #CCC;
+	background-color: white;
+	padding: 5px 0;
+}
+
+/* Draggable div bar between colors panel and other menus */
+#colors-selection-dragger {
+	position: absolute;
+	width: 96%;
+	height: 8px;
+	left: 0;
+	bottom: calc(33.333% - 4px); /* Should always be height of #colors-selection minus half of this component's height */
+	margin: 0 2%;
+	cursor: row-resize;
+	z-index: 3;
+	background-color: #DDD;
+	border-top: 1px solid #BBB;
+	border-bottom: 1px solid #BBB;
+	text-align: center;
+	color: #BBB;
+	line-height: 5px;
+	font-size: 10px;
+}
+
+/* Container for all individual settings components, same as #colors-selection element */
+.individual-settings-container {
+	overflow-y: auto;
+}
+
+/* Container for settings options for a single line */
+.individual-settings {
+	padding: 5px 10px;
+	position: relative;
+}
+
+/*
+ * Buttons for individual lines
+ */
+
+/* Header inside color picker button (line name) */
+.settings-header {
+	margin: 0;
+	position: relative;
+	z-index: 3;
+	border-radius: 5px;
+}
+
+/* X button to remove line from current render */
+.line-deselect-btn {
+	float: right;
+	margin-left: 5px;
+	width: 23px;
+	height: 23px;
+	font-size: 15px;
+}
+
+/* Line reset button */
+.individual-reset-btn {
+	float: right;
+	height: 23px;
+}
+
+/* Info button that brings up line's information window */
+.line-info-btn {
+	float: right;
+	width: 23px;
+	height: 23px;
+	padding: 0;
+	margin-right: 5px;
+}
+
+/* Image on info button */
+.line-info-img {
+	width: 100%;
+	height: 100%;
+}
+
+/* Visibility toggle button */
+.individual-settings-toggle {
+	float: right;
+	width: 23px;
+	height: 23px;
+	padding: 0;
+	margin: 0;
+	margin-right: 5px;
+	background-image: url('../res/vis-on.png'); /* Changes to vis-off on toggle */
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	background-position: center;
+	border: none;
+}
+
+/* Number shown next to visibility button indicated the key it's bound to */
+.toggle-num {
+	float: right;
+	margin: 0;
+	margin-right: 5px;
+	height: 23px;
+	line-height: 23px;
+	vertical-align: middle;
+}
+
+/*
+ * Value inputs for individual lines
+ */
+
+ /* Container for all elements for one setting */
+.settings-row {
+	width: 100%;
+	margin: 3px auto;
+	padding: 0;
+	float: left;
+	clear: left;
+	line-height: 20px;
+}
+
+/* Header label for one setting (e.g. "Contrast" and "Brightness") */
+.settings-value-header {
+	margin: 0;
+	text-align: left;
+	vertical-align: middle;
+	font-size: 11px;
+	height: 20px;
+}
+
+/* Container for slider input */
+.slider-input-div {
+	height: 20px;
+	display: flex; /* Flex display allows vertical centering of range input */
+	align-items: center;
+}
+
+/* Slider input element */
+.slider-input {
+	-webkit-appearance: none; /* Hides default appearance for webkit browsers */
+	appearance: none; /* Hides default appearance for non-webkit browsers */
+	width: 100%;
+	height: 4px;
+	border-radius: 2px;
+	background: #BBBBBB;
+}
+
+/* Styles slider's draggable thumb (webkit browsers) */
+.slider-input::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	background: #4575B5;
+}
+
+/* Changes slider's draggable thumb color on hover (webkit browsers) */
+.slider-input::-webkit-slider-thumb:hover {
+	background: #375D8E;
+}
+
+/* Styles slider's draggable thumb (Firefox browser) */
+.slider-input::-moz-range-thumb {
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	background: #4575B5;
+	border: none;
+}
+
+/* Changes slider's draggable thumb color on hover (Firefox browser) */
+.slider-input::-moz-range-thumb:hover {
+	background: #375D8E;
+}
+
+/* Hides vertical arrows in webkit browsers */
+.number-input::-webkit-inner-spin-button, .number-input::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+/* Number input field */
+.number-input {
+	margin: 0;
+	width: 100%;
+	padding-top: 0;
+	padding-bottom: 0;
+	height: 20px;
+	font-size: 11px;
+	-moz-appearance: textfield; /* Hides vertical arrows in Firefox browser */
+}
+
+/*
+ * AND intersection controls
+ */
+
+/* Header for controls panel */
+.and-controls-header {
+	background-color: #FF00FF; /* Background color of header, should be same as displayed intersection color */
+	color: #FFFFFF;
+	padding: 2px 5px;
+	display: inline-block;
+	border-radius: 5px;
+	border: 1px solid #CCC;
+	margin: 0;
+	float: left;
+}
+
+/*
+ * Color selection
+ */
+
+/* Colored image label inside picker buttons */
+.color-label {
+	width: 75%;
+	height: 75%;
+	position: absolute;
+	left: 12.5%;
+	top: 12.5%;
+	border-radius: 5px;
+}
+
+/* Labels for line name buttons */
+[data-toggle="popover"] > .color-label {
+	width: 100%;
+	height: 100%;
+	left: 0;
+	top: 0;
+	z-index: 2;
+}
+
+/* Button elements for choosing color in popover panels */
+.color-picker {
+	position: relative;
+	margin-left: 0;
+	float: left;
+	border-radius: 5px;
+}
+
+/* Button containing line name and color picker */
+[data-toggle="popover"].color-picker {
+	margin-bottom: 5px;
+}
+
+/* Button containing line name and color picker (same as above) */
+.picker-button {
+	width: 25px;
+	height: 25px;
+	float: left;
+}
+
+/* All content displayed in popover panel (color buttons container) */
+.popover-content {
+	padding: 0;
+}
+
+/* Colors below ONLY affect button colors in color picker popups, see colorPicking.js to modify colors of displayed lines as well */
+
+.col-0 {
+	background: #00FFFF;
+}
+
+.col-1 {
+	background: #FFFF00;
+}
+
+.col-2 {
+	background: #FF7FB6;
+}
+
+.col-3 {
+	background: #FFFFFF;
+}
+
+.col-4 {
+	background: #0000FF;
+}
+
+.col-5 {
+	background: #B6FF00;
+}
+
+.col-6 {
+	background: #FF0000;
+}
+
+.col-7 {
+	background: #808080;
+}
+
+.col-8 {
+	background: #FF00FF;
+}
+
+.col-9 {
+	background: #00FF00;
+}
+
+.col-10 {
+	background: #DEB887;
+}
+
+.col-11 {
+	background: #000000;
+}
+
+.col-12 {
+	background: #800080;
+}
+
+.col-13 {
+	background: #FF8000;
+}
+
+.col-14 {
+	background: #7F3300;
+}
+
+/* Fire LUT button label */
+.col-15 {
+	background: url("../res/fire.png") no-repeat center; /* Fire LUT image label */
+	background-size: 100% 100%;
+	background-color: #000080;
+}

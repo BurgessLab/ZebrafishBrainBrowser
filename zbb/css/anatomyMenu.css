@@ -1,0 +1,37 @@
+/*
+ * This file contains styling for the Anatomy menu (both z-brain and pajevic)
+ */
+
+/* Container for "Show Full" and "Reset" buttons */
+#anatomy-btn-container {
+	margin: 7px 0;
+	padding: 0;
+}
+
+/* Entire z-brain region selection accordion */
+#accordion {
+	margin-bottom: 15px;
+}
+
+/* Expandable panels for z-brain subregions */
+.select-panel {
+	text-align: left;
+	margin-top: 0 !important;
+}
+
+/* Headings for z-brain subregions */
+.select-heading {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+/* Titles for z-brain subregions */
+.select-title {
+	font-size: 15px;
+	font-family: verdana;
+}
+
+/* Body for z-brain subregions (contain lists of individual regions) */
+.select-body {
+	padding: 5px 0;
+}

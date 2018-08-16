@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<!-- This file contains content for the Fiji help page when trying to upload custom lines to the Zebrafish Brain Browser -->
+
+<html lang="en">
+<head>
+	
+	<!-- Page title, icon, and metadata -->
+	<title>Zebrafish Brain Browser - Fiji Help</title>
+	<link rel="icon" href="../res/favicon.ico">
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	
+	<!-- Stylesheets -->
+	<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">  <!-- Bootstrap front-end framework https://github.com/twbs/bootstrap -->
+	<link rel="stylesheet" type="text/css" href="../css/googleMerriweather.css">  <!-- Google's "Merriweather" font https://fonts.googleapis.com/css?family=Merriweather -->
+	<link rel="stylesheet" type="text/css" href="styles.css">  <!-- My stylesheet -->
+	
+</head>
+<body>
+	
+	<!-- Page header -->
+	<div id="header-container" class="container-fluid">
+		<h1 class="text-center">Custom PNG Atlas Generation With Fiji</h1>
+	</div>
+	
+	<!-- Page content -->
+	<div id="content-container" class="container-fluid">
+	
+		<!-- Page purpose -->
+		<p>This page will help you use Fiji to convert TIF stacks to PNG atlases, which can then be loaded and viewed in the Zebrafish Brain Browser (<a href="../" target="_blank">zbbrowser.com</a>).</p>
+		
+		<!-- Fiji setup and link -->
+		<h3>Fiji Setup</h3>
+		<p>You can get Fiji here: <a href="https://imagej.net/Fiji" target="_blank">https://imagej.net/Fiji</a>. Follow the instructions on the Downloads page to download and install it.</p>
+		
+		<!-- Conversion steps -->
+		<h3>Converting TIF Stacks to PNG Atlases</h3>
+		<ol>
+			<li>Open Fiji</li>
+			<li>Select File->Open... and select your TIF file</li>
+			<li>After the TIF has loaded, select Image->Stacks->Make Montage...</li>
+			<li>Enter the options values seen in the image below</li>
+			<img src="options.png" alt="Montage options" />
+			<li>The higher you set the "Scale factor" value, the higher the image quality will be in the brain browser. We recommend you set this value to 0.25 for a low-resolution image, 0.5 for a medium-resolution image, 0.75 for a high-resolution image, or 1.0 for a very-high-resolution image. Note that higher-resolution images will require more high-end computer hardware to run in the brain browser.</li>
+			<li>Select "OK"</li>
+			<li>After the montage image appears, select File->Save As->PNG... and save the image with any name you'd like</li>
+			<li>Open the image in the brain browser to view the line. You're done!</li>
+		</ol>
+		
+	</div>
+	
+</body>
+</html>

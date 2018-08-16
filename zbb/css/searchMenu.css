@@ -1,0 +1,53 @@
+/*
+ * This file contains styling for the search menu (including spatial and text search)
+ */
+
+/* This contains the buttons at the top of the menu for switching between spatial and text search */
+#search-header-btn-group {
+	margin-bottom: 10px;
+}
+
+/*
+ * Spatial search
+ */
+
+/* Results label (line names shown) */
+.ss-label {
+	padding-left: 2px;
+}
+
+/* Start button */
+#ss-start-btn {
+	margin-bottom: 10px;
+}
+
+/*
+ * Text search
+ */
+
+/* Table data tags in results table */
+#text-search-table-body td {
+	position: relative;
+}
+
+/* Info button that appears in top-right of results column */
+.text-search-info-btn {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 12px;
+	height: 12px;
+	padding: 0;
+	background: url(../res/infoOpen.png);
+	background-size: 8px 8px;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
+/*
+ * Deprecated (unused)
+ */
+
+#ss-end-btn-container {
+	padding: 5px 0;
+}

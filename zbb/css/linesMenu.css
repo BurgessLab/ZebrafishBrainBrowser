@@ -1,0 +1,95 @@
+/*
+ * This file contains all styling specific to the Lines menu
+ */
+
+/*
+ * Below is styling for content within the custom file upload tab
+ */
+
+/* Container for list of appended custom lines (checkboxes) */
+#custom-lines {
+	margin-top: 10px;
+}
+
+/* "Select file" button */
+#choose-custom-file-btn {
+	margin: 5px 0;
+}
+
+/* "Load" button */
+#custom-file-load-btn {
+	margin: 5px;
+}
+
+/*
+ * Styling for AND intersection content
+ */
+
+/* Container around all content related to AND intersection */
+#and-intersection-container {
+	border-top: 1px solid #AAA;
+	margin-top: 20px;
+	padding-top: 10px;
+}
+
+/* p tag with intersection description/requirements */
+#and-intersection-description {
+	font-size: 12px;
+}
+
+/* Create/Remove intersection button */
+#and-intersection-toggle-btn {
+	margin: 0;
+}
+
+/*
+ * Styling for lines selection
+ */
+
+/* Pane containing list of lines with specific type (transgenic, gal4, cre, misc, custom) */
+.region-select-pane {
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+/* Labels for checkbox inputs in lines lists */
+.container-fluid > .settings-label {
+	margin-left: 3px;
+}
+
+/* Container around checkbox, line label, and publication info */
+.lines-selection-container {
+	width: 9999px; /* Width is so large to allow publication information to go offscreen instead of wrap to new line */
+}
+
+/* Publication information */
+.pub-info {
+	float: left;
+	font-size: 10px;
+	font-style: italic;
+	height: 100%;
+	line-height: 20px;
+	vertical-align: middle;
+	margin: 0;
+	margin-left: 15px;
+	color: #BBB;
+}
+
+/* Disabling color changing and underlining for publication links */
+.pub-info-link, .pub-info-link:hover, .pub-info-link:active, .pub-info-link:visited, .pub-info-link:link {
+	text-decoration: none;
+	color: #BBB;
+	height: 100%;
+}
+
+/*
+ * Deprecated (unused)
+ */
+
+#lines-header-btn-group {
+	margin-bottom: 10px;
+}
+
+.line-selection-tab-link {
+	padding: 5px !important;
+}

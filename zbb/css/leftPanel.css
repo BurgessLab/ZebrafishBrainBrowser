@@ -1,0 +1,139 @@
+/*
+ * This file is used for styling everything in the left panel, including the x3d windows, the buttons inside them, and the sliders below them
+ */
+
+/*
+ * The styles below set the proportions of the x3d windows to accurately reflect the dimensions of the registered brain data, and should be left untouched unless those dimensions are changed
+ */
+
+#x-window, #proj-x-window {
+	width: 37.42%; /* height / total width */
+	height: 36.8095%; /* frames / total height */
+}
+
+#y-window, #proj-y-window {
+	width: 62.58%; /* width / total width */
+	height: 36.8095%; /* frames / total height */
+}
+
+#z-window, #proj-z-window {
+	width: 62.58%; /* width / total width */
+	height: 53.988%; /* height / total height */
+}
+
+#volume-window {
+	width: 37.42%; /* height / total width */
+	height: 53.988%; /* height / total height */
+	cursor: -webkit-grab; /* Settings cursor to grab hand over 3D volume window */
+	cursor: grab;
+}
+
+/* This applies the smooth fullscreen transition to the x3d windows */
+.display-window, .proj-window {
+	box-sizing: border-box;
+	float: left;
+	position: absolute;
+	-webkit-transition: width 0.5s, height 0.5s, top 0.5s, left 0.5s;
+	transition: width 0.5s, height 0.5s, top 0.5s, left 0.5s;
+}
+
+/*
+ * These styles are applied to buttons within the x3d windows, including the max proj buttons, vr button, and fullscreen buttons
+ */
+
+/* Maximum projection buttons (and "Slice" buttons) */
+.mp-btn {
+	position: absolute; /* Absolute positioning is useful for exact placement of elements */
+	top: 0;
+	right: 22px;
+}
+
+/* VR button in 3D view */
+#vr-btn {
+	position: absolute;
+	top: 0;
+	right: 22px;
+}
+
+/* Fullscreen buttons */
+.full-btn {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 22px;
+	height: 22px;
+	padding: 0;
+}
+
+/* Arrow images within fullscreen buttons */
+.full-btn-img {
+	width: 80%;
+	height: 80%;
+	margin: 10%;
+}
+
+/*
+ * The styling below affects the sliders below each of the x3d windows
+ */
+
+/* x slider proportions */
+#slice-div-x {
+	width: 37.42%;
+	height: 4.60125%;
+}
+
+/* y slider proportions */
+#slice-div-y {
+	width: 62.58%;
+	height: 4.60125%;
+}
+
+/* z slider proportions */
+#slice-div-z {
+	width: 62.58%;
+	height: 4.60125%;
+}
+
+/* volume slider proportions (even though no slider is present for the 3D volume) */
+#slice-div-volume {
+	width: 37.42%;
+	height: 4.60125%;
+}
+
+/* This affects the divs that contain the slider inputs */
+.slice-div {
+	display: flex; /* Flex display is necessary to center slider inputs vertically */
+	align-items: center;
+}
+
+/* Slider inputs themselves */
+.slice-slider {
+	width: 100%;
+	height: 4px;
+}
+
+/*
+ * The following affects the slice numbers visible in each of the slice views (e.g. 209 / 419)
+ */
+
+.slice-num {
+	position: absolute;
+	margin: 0;
+	left: 0;
+	bottom: 0;
+	color: #FFFFFF;
+}
+
+#slice-num-x {
+	margin-left: 5px; /* A small margin is applied to the x window slice number to prevent is from going offscreen */
+}
+
+/*
+ * The following styling affects the reported region info below the 3D volume window
+ */
+
+#click-info {
+	color: white;
+	margin: auto 10px;
+	font-size: 12px;
+}

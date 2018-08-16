@@ -1,0 +1,120 @@
+/*
+ * This file exists to provide general styling to page components
+ */
+
+/*
+ * The styling changes below are applied to HTML tags, so all elements with the corresponding tag names are changed
+ */
+
+/* The body is the outermost container of visible content */
+body {
+	margin: 0;
+	background-color: #FFFFFF;
+	font-family: verdana; /* Font family changes are applied to all child elements, making everything on the page use this font type */
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: "Merriweather", Georgia, serif; /* Headers are set to use Google's Merriweather font instead of Verdana as seen above */
+}
+
+x3d {
+	cursor: crosshair; /* Applying crosshair cursor when hovering over x3d elements */
+}
+
+/* This tag is only used for highlighting text in the text search results */
+mark {
+	background-color: yellow;
+	color: black;
+	padding: 0;
+}
+
+/* This is a rather convoluted way to hide the default styling of the file selection button in the custom lines tab, a separate button was styled in its place */
+input[type="file"] {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+/*
+ * The styles below are common styling changes that can easily be applied to page elements using classes
+ * They should be self-explanatory
+ */
+
+.half-width {
+	width: 50%;
+}
+
+.full-width {
+	width: 100%;
+}
+
+.less-margin {
+	margin-top: 10px;
+}
+
+.more-margin {
+	margin-top: 20px;
+}
+
+.margin-top-bottom {
+	margin: 10px 0;
+}
+
+.no-margin {
+	margin-top: 0;
+}
+
+.margin-0 {
+	margin: 0;
+}
+
+.padding-10 {
+	padding: 10px 0;
+}
+
+.no-padding {
+	padding: 0;
+}
+
+.padding-right-0 {
+	padding-right: 0;
+}
+
+.padding-bottom {
+	padding-bottom: 2px;
+}
+
+.hidden {
+	display: none;
+}
+
+.float-left {
+	float: left;
+}
+
+.float-right {
+	float: right;
+}
+
+.clear-left {
+	clear: left;
+}
+
+.border-top {
+	border-top: 1px solid gray;
+}
+
+.border-bottom {
+	border-bottom: 1px solid gray;
+}
+
+.border-left {
+	border-left: 1px solid gray;
+}
+
+.border-right {
+	border-right: 1px solid gray;
+}

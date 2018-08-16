@@ -1,0 +1,38 @@
+How to add a new line to the Zebrafish Brain Browser:
+
+First, create an image atlas of the data (5 minutes):
+	1. Open Fiji
+	2. Open the line's TIF stack
+	3. Go to Image->Stacks->Make Montage...
+	4. Set columns=10, rows=10, first slice=1, last slice=420, increment=4, border width=0, font size=12, label slices=off, use foreground color=off
+	5. Set scale factor=0.25
+	5. Click "OK"
+	6. Save new image as [line id]_2560.png where line ID is lowercase version of the line name (no brackets)
+		- Note: The image doesn't need to be exactly 2560 pixels wide, but the name MUST have 2560 at the end of it. The same goes for 5120 and 7680 in the medium and high resolution names.
+	7. Repeat steps 3-6 but set scale factor=0.5 at step 5 and name image [line id]_5120.png in step 6 (medium res image)
+	8. Repeat steps 3-6 but set scale factor=0.75 at step 5 and name image [line id]_7680.png in step 6 (high res image)
+	9. Navigate to zbb/res/lineImages/[line type]/ where line type is either transgenic, gal4, cre, or misc
+	10. Create a new folder and name it using the line ID (line ID is lowercase version of line name)
+	11. Place all three images inside the newly created folder
+
+Second, update the information in data.js (5 minutes):
+	1. Open defaults.csv (file containing default values and information about each line including contrast, brightness, published, scanned by, etc.)
+	2. Create a new line anywhere in the file and enter new information for line being added (some of it can be blank)
+	3. Save and close defaults.csv
+	4. Open the tsvParser.py Python script
+	5. Add the line ID (lowercase line name) to the corresponding line list (either TRANSGENIC, GAL4, CRE, or MISC)
+		- Note: The order of these lists is the order the lines will appear in the Lines menu. It is recommended you enter the line in alphabetical order.
+	6. Run tsvParser.py, which will output to the standard out terminal
+	7. Copy all of the arrays corresponding to the list you added the line to (e.g. all transgenic arrays)
+	8. Replace every corresponding array in data.js. Make sure to add semicolons at the end.
+
+Third, regenerate the spatial search binaries (1-2+ hours):
+	1. Create a binary tif stack of your new line, and place it in a single folder containing ALL of the other lines' binary tif stacks (make sure they all have the same dimensions)
+	2. Open tifToBinary.py
+	3. Add the line ID to the SAME list you added it to in tsvParser.py (TRANSGENIC, GAL4, CRE, or MISC) and in the SAME location
+		- WARNING: If you do not add the line ID in the same list and in the same spot as it was in tsvParser.py and data.js, the spatial search will not work properly
+	4. Change the IN_FOLDER and OUT_FOLDER values to accurately reflect which folders you are reading from and writing to
+		- WARNING: Do not change any values in this file other than one of the lines lists and IN_FOLDER and OUT_FOLDER
+		- WARNING: Make sure IN_FOLDER only contains the binary tif stacks and no other files, and make sure OUT_FOLDER is empty
+	5. Run tifToBinary.py. This may take several hours.
+	6. When the script is complete, there will be several thousand binary fragment files in OUT_FOLDER. Copy all of these files into zbb/res/ssBinaries/, and delete/override all of the old files. This may also take a while.

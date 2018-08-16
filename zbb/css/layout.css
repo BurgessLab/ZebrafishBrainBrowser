@@ -1,0 +1,98 @@
+/*
+ * This file provides styling for the page's general layout
+ */
+
+/*
+ * The following controls the layout of the left panel (left side of the screen)
+ */
+
+ /* Highest-level container for left panel, controls panel sizing and background/border options */
+#left-panel-container {
+	width: 65%;
+	height: 100%;
+	float: left;
+	border-radius: 30px;
+	box-shadow: 0 0 20px black;
+	background: #555555;
+}
+
+/* Second-level container for left panel, controls margin size around x3d windows */
+#left-panel {
+	width: 96%;
+	height: 96%;
+	float: left;
+	margin: 2%;
+	position: relative;
+}
+
+/* Innermost container for left panel, manages panel's aspect ratio (calculated from slider sizes and x3d window sizes) */
+#display-container {
+	width: 100%;
+	position: relative;
+	padding-bottom: 69.3187%; /* Calculated from total aspect ratio */
+}
+
+/*
+ * Styling below manages the layout of the right panel (right side of the screen)
+ */
+
+ /* Manages size of entire right panel */
+#right-panel {
+	width: 35%;
+	height: 100vh;
+	float: right;
+	position: relative;
+}
+
+/* Outermost container for right menus (everything on right side of screen below menu buttons) */
+#right-div-container {
+	padding: 2%; /* Spacing around right menu divs */
+	padding-bottom: 0;
+	margin: 0;
+	position: relative;
+}
+
+/* Second-level container for right menus, applies border and shadow around it */
+#right-div-border {
+	box-shadow: 0 0 20px black;
+	border-radius: 15px 15px 15px 15px;
+	width: 100%;
+	height: 100%;
+}
+
+/* Innermost container for right divs */
+.right-div {
+	padding: 2%; /* Padding between menu content and border */
+	height: 66.667%; /* Default height of menus, the other portion is occupied by the draggable individual settings panel (see #colors-selection in individualSettings.css) */
+	text-align: center;
+	border-radius: 15px 15px 0 0;
+	position: relative;
+	overflow-y: auto;
+}
+
+/*
+ * Styling below is for main menu buttons at top of right panel (lines, anatomy, settings, etc.)
+ * Button widths should be edited when adding new menu buttons
+ */
+
+/* Top row of buttons */
+.nav-btn {
+	width: 33.333%;
+	float: left;
+}
+
+/* Bottom row of buttons */
+.nav-btn-2 {
+	width: 33.333%;
+	float: left;
+}
+
+/*
+ * Deprecated (unused)
+ */
+
+.right-div-border-removed {
+	padding: 0;
+	border: none;
+	border-radius: 15px 15px 0 0;
+}

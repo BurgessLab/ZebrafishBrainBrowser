@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE X3D PUBLIC "ISO//Web3D//DTD X3D 3.0//EN" "http://www.web3d.org/specifications/x3d-3.0.dtd">
+<X3D version="3.0" profile="Immersive" xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance" xsd:noNamespaceSchemaLocation="http://www.web3d.org/specifications/x3d-3.0.xsd">
+	<head>
+		<meta name="filename" content="scene.x3d" />
+		<meta name="generator" content="Blender 2.79 (sub 0)" />
+	</head>
+	<Scene>
+		<NavigationInfo headlight="true"
+		                visibilityLimit="0.0"
+		                type='"EXAMINE", "ANY"'
+		                avatarSize="0.25, 1.75, 0.75"
+		                />
+		<Background DEF="WO_World"
+		            groundColor="0.051 0.051 0.051"
+		            skyColor="0.051 0.051 0.051"
+		            />
+		<Transform DEF="Plane_TRANSFORM"
+		           translation="0.000000 0.000000 0.000000"
+		           scale="19.861542 19.861542 19.861542"
+		           rotation="0.000000 0.707107 0.707107 3.141593"
+		           >
+			<Transform DEF="Plane_ifs_TRANSFORM"
+			           translation="0.000000 0.000000 0.000000"
+			           scale="1.000000 1.000000 1.000000"
+			           rotation="1.000000 0.000000 0.000000 0.000000"
+			           >
+				<Group DEF="group_ME_Plane">
+					<Shape>
+						<Appearance>
+							<ImageTexture DEF="IM_grid_png"
+							              url='"grid.png" "K:/1_users/Chris/vr/grid.png"'
+							              />
+						</Appearance>
+						<IndexedFaceSet solid="false"
+						                texCoordIndex="0 1 2 3 -1 "
+						                coordIndex="0 1 3 2 -1 "
+						                >
+							<Coordinate DEF="coords_ME_Plane"
+							            point="-1.000000 -1.000000 0.000000 1.000000 -1.000000 0.000000 -1.000000 1.000000 0.000000 1.000000 1.000000 0.000000 "
+							            />
+							<TextureCoordinate point="0.0000 1.0000 0.0000 0.0000 1.0000 0.0000 1.0000 1.0000 " />
+						</IndexedFaceSet>
+					</Shape>
+				</Group>
+			</Transform>
+		</Transform>
+	</Scene>
+</X3D>
