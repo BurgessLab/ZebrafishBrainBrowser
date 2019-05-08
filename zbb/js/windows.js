@@ -125,17 +125,35 @@ function setLayout() {
 
 // Updates position of blue crosshair lines in volumes after clicking
 function updateLines() {
+  // Getting width and height of each window
+  var xW = $('#x-window').width() * window.devicePixelRatio;
+  var xH = $('#x-window').height() * window.devicePixelRatio;
+  var yW = $('#y-window').width() * window.devicePixelRatio;
+  var yH = $('#y-window').height() * window.devicePixelRatio;
+  var zW = $('#z-window').width() * window.devicePixelRatio;
+  var zH = $('#z-window').height() * window.devicePixelRatio;
+  
 	// Getting coordinate of currently selected point in 3D space
-	// Calculated from slice slider value and total window size 
-	var lineX = $('#x-input').val() * $('#z-window').width() * window.devicePixelRatio; // window.devicePixelRatio used because many browsers will automatically scale up element sizes for high-resolution screens, meaning width() and height() values would be incorrect
-	var lineY = (1 - $('#y-input').val()) * $('#z-window').height() * window.devicePixelRatio;
-	var lineZ = $('#z-input').val() * $('#y-window').height() * window.devicePixelRatio;
-	
+	// Calculated from slice slider value and total window size
+	var lineX = $('#x-input').val() * zW; // window.devicePixelRatio used because many browsers will automatically scale up element sizes for high-resolution screens, meaning width() and height() values would be incorrect
+	var lineY = (1 - $('#y-input').val()) * zH;
+	var lineZ = $('#z-input').val() * yH;
+  
+  // Transform absolute coordinates to zoom/pan frustum coordinates (see zoom.js)
+  var fovX = parseFloat($('#view-x').attr('fieldOfView'));
+  var [xLineX, xLineY] = zoomTransform(lineY, lineZ, fovX, camXPos[0], camXPos[1], X_CAM_DIST, xW / (xFull ? 2.605 : 1), xH / (xFull ? 2.605 : 1), Y_SIZE, Z_SIZE, 1);
+  
+  var fovY = parseFloat($('#view-y').attr('fieldOfView'));
+  var [yLineX, yLineY] = zoomTransform(lineX, lineZ, fovY, camYPos[0], camYPos[1], Y_CAM_DIST, yW / (yFull ? 1.6025 : 1), yH, X_SIZE, Z_SIZE, 1);
+  
+  var fovZ = parseFloat($('#view-z').attr('fieldOfView'));
+  var [zLineX, zLineY] = zoomTransform(lineX, lineY, fovZ, camZPos[0], camZPos[1], Z_CAM_DIST, zW, zH, X_SIZE, Y_SIZE, 1);
+  
 	// Looping through all line volumes currently being rendered and updating crosshair locations
 	$.each(currRender, function(i, val) {
-		$('.' + val + '-volume-x').attr('lineLoc', (lineY * (xFull ? 2.605 : 1)) + ' ' + (($('#y-window').height() * window.devicePixelRatio - lineZ) * (xFull ? 2.605 : 1)) + ' 0'); // Multipliers applied for adjustments in fullscreen
-		$('.' + val + '-volume-y').attr('lineLoc', (lineX * (yFull ? 1.6025 : 1)) + ' ' + ($('#y-window').height() * window.devicePixelRatio - lineZ) + ' 0');
-		$('.' + val + '-volume-z').attr('lineLoc', lineX + ' ' + ($('#z-window').height() * window.devicePixelRatio - lineY) + ' 0');
+		$('.' + val + '-volume-x').attr('lineLoc', (xLineX * (xFull ? 2.605 : 1)) + ' ' + ((yH - xLineY) * (xFull ? 2.605 : 1)) + ' 0'); // Multipliers applied for adjustments in fullscreen
+		$('.' + val + '-volume-y').attr('lineLoc', (yLineX * (yFull ? 1.6025 : 1)) + ' ' + (yH - yLineY) + ' 0');
+		$('.' + val + '-volume-z').attr('lineLoc', zLineX + ' ' + (zH - zLineY) + ' 0');
 	});
 }
 
@@ -708,9 +726,13 @@ function xBoxClicked(evt) {
 	var posY = 1 - (pX / boxW);
 	var posZ = pY / boxH;
 	
+  // Apply transformation accounting for zoom/pan frustum (see zoom.js)
+  var fovX = parseFloat($('#view-x').attr('fieldOfView'));
+  var [valY, valZ] = zoomInverseTransform(posY, posZ, fovX, camXPos[0], camXPos[1], X_CAM_DIST, Y_SIZE, Z_SIZE, 1, 1);
+  
 	// Adjust y and z slice locations (selection is made in x window)
-	$('#y-input').val(posY).trigger('input');
-	$('#z-input').val(posZ).trigger('input');
+	$('#y-input').val(valY).trigger('input');
+	$('#z-input').val(valZ).trigger('input');
 	
 	updateLines(); // Updating blue crosshair lines
 	
@@ -791,8 +813,11 @@ function yBoxClicked(evt) {
 	var posX = pX / boxW;
 	var posZ = pY / boxH;
 	
-	$('#x-input').val(posX).trigger('input');
-	$('#z-input').val(posZ).trigger('input');
+  var fovY = parseFloat($('#view-y').attr('fieldOfView'));
+  var [valX, valZ] = zoomInverseTransform(posX, posZ, fovY, camYPos[0], camYPos[1], Y_CAM_DIST, X_SIZE, Z_SIZE, -1, 1);
+  
+	$('#x-input').val(valX).trigger('input');
+	$('#z-input').val(valZ).trigger('input');
 	
 	updateLines();
 	
@@ -868,8 +893,11 @@ function zBoxClicked(evt) {
 	var posX = pX / boxW;
 	var posY = 1 - (pY / boxH);
 	
-	$('#x-input').val(posX).trigger('input');
-	$('#y-input').val(posY).trigger('input');
+  var fovZ = parseFloat($('#view-z').attr('fieldOfView'));
+  var [valX, valY] = zoomInverseTransform(posX, posY, fovZ, camZPos[0], camZPos[1], Z_CAM_DIST, X_SIZE, Y_SIZE, -1, -1);
+  
+	$('#x-input').val(valX).trigger('input');
+	$('#y-input').val(valY).trigger('input');
 	
 	updateLines();
 	

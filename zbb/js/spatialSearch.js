@@ -66,6 +66,11 @@ var sszp2y = -1;
 
 // Turns on/off highlighting of selected spatial search region
 function toggleSSHighlighting(enabled) {
+  if(!enabled) {
+    // Tell users that zooming has been re-enabled
+    $('#ss-zoom-disabled').css('display', 'none');
+  }
+  
 	ssHighlighted = enabled;
 	updateSSVolumeAttribs(); // Updates values like search box location and size in slice windows
 }
@@ -228,9 +233,13 @@ function showSearch() {
 	$('#ss-show-btn').addClass('active');
 }
 
+// Begins spatial search routine after pressing 'Start' button
 function startSearch() {
-	toggleSSHighlighting(false);
+  toggleSSHighlighting(false);
 	
+  // Warn users that zooming is temporarily disabled
+  $('#ss-zoom-disabled').css('display', 'block');
+  
 	if(!window.Worker) {
 		$('#ss-message').text('Your browser does not support Web Workers, so a spatial search cannot be performed. Please update your browser and try again.');
 		$('#ss-message').css('display', 'block');

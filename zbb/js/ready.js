@@ -11,15 +11,12 @@ var lastColorsLoc = 0.33333; // Keeps track of last set height of individual set
 
 // Function that's called when every part of page has downloaded
 // This function should be edited whenever you add/edit something you want to occur as soon as the page loads
-$(document).ready(function() {
+function docReady() {
 	// Sets positions/dimensions of windows/sliders in left panel
 	// This was primarily useful back when the user had 4 layout options, but should now be left untouched
 	setLayout();
 	
-	// Deprecated functionality, this checkbox input no longer exists (was replaced with Max buttons)
-	//$('#proj-input').prop('checked', false).change();
-	
-	// TODO: append ALL huc-cer stuff here!!!
+	// NOTE: append ALL huc-cer stuff here!!!
 	
 	bindSliderAndNumberInputs(HUC_CER[0]); // Binding inputs for HuC-Cer volumes
 	resetIndividual(HUC_CER[0]); // Resetting HuC-Cer volumes
@@ -40,47 +37,6 @@ $(document).ready(function() {
 	// Enabling color picker popovers
 	$('[data-toggle="popover"]').popover();
 	
-	// The use of Web Workers for page construction has been deprecated
-	// Web Workers used to significantly speed up load times, but optimizations have been made so that they are now largely irrelevant
-	// The constructPage() function is now used instead, see construction.js for details
-	/*
-	if(typeof(Worker) !== "undefined") {
-		var w = new Worker('js/backgroundConstruction.js');
-		w.onmessage = function(event) {
-			var data = event.data;
-			
-			var transgenicListData = data[0];
-			var gal4ListData = data[1];
-			var creListData = data[2];
-			var miscListData = data[3];
-			
-			$('#transgenic-list').append(transgenicListData);
-			$('#gal4-list').append(gal4ListData);
-			$('#cre-list').append(creListData);
-			$('#misc-list').append(miscListData);
-			
-			var xAnatomy = data[4];
-			var yAnatomy = data[5];
-			var zAnatomy = data[6];
-			var vAnatomy = data[7];
-			
-			$('.anatomy-x-container').append(xAnatomy);
-			$('.anatomy-y-container').append(yAnatomy);
-			$('.anatomy-z-container').append(zAnatomy);
-			$('.anatomy-full-container').append(vAnatomy);
-			
-			resetOverall();
-			resetAdvanced();
-			
-			w.terminate();
-			w = undefined;
-		};
-	} else {
-		console.warn('This browser does not support web workers. Page load times may suffer.');
-		constructPage();
-	}
-	*/
-	
 	// Appending data to page on load, including lines lists in the Lines menu and anatomy volumes
 	// See construction.js for details
 	constructPage();
@@ -99,7 +55,14 @@ $(document).ready(function() {
 						}
 					}
 				} else {
-					xBoxClicked(evt); // Updates crosshair lines and slicer locations on left click
+          if(evt.ctrlKey) {
+            // Panning activated, see zoom.js
+            screenHeld = 'x';
+            lastZoomMouseX = evt.clientX;
+            lastZoomMouseY = evt.clientY;
+          } else {
+            xBoxClicked(evt); // Updates crosshair lines and slicer locations on left click
+          }
 				}
 			} else if(evt.which == 3 && !xFull && !spatialSearchOn) { // Right click event, also checks if x window is not in fullscreen and spatial search is not on
 				setPartialProj('x', evt); // Updating partial projection
@@ -121,7 +84,14 @@ $(document).ready(function() {
 						}
 					}
 				} else {
-					yBoxClicked(evt); // Updates crosshair lines and slicer locations on left click
+          if(evt.ctrlKey) {
+            // Panning activated, see zoom.js
+            screenHeld = 'y';
+            lastZoomMouseX = evt.clientX;
+            lastZoomMouseY = evt.clientY;
+          } else {
+            yBoxClicked(evt); // Updates crosshair lines and slicer locations on left click
+          }
 				}
 			} else if(evt.which == 3 && !yFull && !spatialSearchOn) { // Right click event, also checks if x window is not in fullscreen and spatial search is not on
 				setPartialProj('y', evt);
@@ -143,7 +113,14 @@ $(document).ready(function() {
 						}
 					}
 				} else {
-					zBoxClicked(evt); // Updates crosshair lines and slicer locations on left click
+          if(evt.ctrlKey) {
+            // Panning activated, see zoom.js
+            screenHeld = 'z';
+            lastZoomMouseX = evt.clientX;
+            lastZoomMouseY = evt.clientY;
+          } else {
+            zBoxClicked(evt); // Updates crosshair lines and slicer locations on left click
+          }
 				}
 			} else if(evt.which == 3 && !zFull && !spatialSearchOn) { // Right click event, also checks if x window is not in fullscreen and spatial search is not on
 				setPartialProj('z', evt); // Updating partial projection
@@ -230,6 +207,13 @@ $(document).ready(function() {
 			$('#' + openPopover + '-color').click();
 		}
 	});
+  
+  // Resetting camera panning, see zoom.js
+  $(window).mouseup(function(evt) {
+    if(evt.which == 1) { // Left mouse button
+      screenHeld = '';
+    }
+  });
 	
 	// These functions keep track of whether the shift key is currently being held down, which is used to determine whether selected anatomy should be shown when shift-clicking
 	// See windows.js
@@ -280,7 +264,7 @@ $(document).ready(function() {
 			$('#colors-selection-dragger').css('bottom', 'calc(' + locText + ' - 4px)');
 			$('.right-div').css('height', ((1 - loc) * 100) + '%');
 		}
-	});
+  });
 	
 	// Indicates settings bar is no longer being dragged when mouse is released
 	$(document).mouseup(function() {
@@ -288,7 +272,48 @@ $(document).ready(function() {
 			colorsAdjusting = false;
 		}
 	});
-});
+  
+  // Removing key from the "keyDown" list when it's released, allowing events for that key to fire once again
+	$(document).keyup(function(evt) {
+		if(evt.key) { // Preventing strange occurrence where keyup event may not have a key associated with it
+			var key = evt.key.toLowerCase();
+			var index = keysDown.indexOf(key);
+			
+			if(index > -1) {
+				keysDown.splice(index, 1); // Removing key from keyDown list
+			}
+		}
+	});
+	
+	// Fixing strange bug where HuC-Cer doesn't appear in 3D volume window at first
+	// Calls reset function on HuC-Cer after small period time (after page and X3DOM is fully loaded)
+	setTimeout(function() {
+		resetIndividual(HUC_CER[0]);
+    bindZoomFunctions(); // Must be bound after delay to work consistently
+	}, 250); // Time delayed before reset in milliseconds
+}
+$(document).ready(docReady);
+
+// Binds scroll-to-zoom and panning functions to events
+function bindZoomFunctions() {
+  // Scroll-to-zoom functionality, see zoom.js
+  $('#x3dom-x-window-canvas').bind('mousewheel', function(evt) { // Binding to canvas element generated for x window
+    scrollToZoom(evt, '#view-x');
+  });
+  $('#x3dom-y-window-canvas').bind('mousewheel', function(evt) { // Binding to canvas element generated for y window
+    scrollToZoom(evt, '#view-y');
+  });
+  $('#x3dom-z-window-canvas').bind('mousewheel', function(evt) { // Binding to canvas element generated for z window
+    scrollToZoom(evt, '#view-z');
+  });
+  
+  // Handle camera panning while zoomed, see zoom.js
+  $('#x3dom-x-window-canvas, #x3dom-y-window-canvas, #x3dom-z-window-canvas').mousemove(function(evt) {
+    if(screenHeld != '') {
+      panCamera(evt.clientX, evt.clientY);
+    }
+  });
+}
 
 // Keeps track of keys currently held down
 var keysDown = [];
@@ -335,8 +360,8 @@ function setShortcuts() {
 				} else if(key == 'a') { // Hide/show full anatomy
 					var fullBtnVisible = $('#show-full-btn').css('display') !== 'none';
 					toggleFullAnatomy(activeAnatomy, fullBtnVisible ? 'hide-full-btn' : 'show-full-btn', fullBtnVisible); // Showing/hiding active anatomy
-				} else if(key == 'z') { // Reset zoom
-					// TODO: implement this when implementing zoom
+				} else if(key == 'z') { // Reset zoom, see zoom.js
+					resetZoomAll();
 				} else if(key == '1' || key == '2' || key == '3' || key == '4' || key == '5' || key == '6' || key == '7' || key == '8' || key == '9') { // 1-9 line toggle keys
 					var index = parseInt(key) - 1;
 					toggleSelection(index);
@@ -347,22 +372,4 @@ function setShortcuts() {
 			}
 		}
 	});
-	
-	// Removing key from the "keyDown" list when it's released, allowing events for that key to fire once again
-	$(document).keyup(function(evt) {
-		if(evt.key) { // Preventing strange occurrence where keyup event may not have a key associated with it
-			var key = evt.key.toLowerCase();
-			var index = keysDown.indexOf(key);
-			
-			if(index > -1) {
-				keysDown.splice(index, 1); // Removing key from keyDown list
-			}
-		}
-	});
-	
-	// Fixing strange bug where HuC-Cer doesn't appear in 3D volume window at first
-	// Calls reset function on HuC-Cer after small period time (after page and X3DOM is fully loaded)
-	setTimeout(function() {
-		resetIndividual(HUC_CER[0]);
-	}, 2000); // Time delayed before reset in milliseconds
 }

@@ -68,6 +68,9 @@ function showVolumeWindowAndSliders() {
 
 // Resets all settings in the Settings menu and changes made in the left panel (slice positioning, fullscreen, etc.)
 function resetAdvanced() {
+  // Reset to fully-zoomed out
+  resetZoomAll();
+  
 	$('#invert-input').prop('checked', false).change(); // Resetting color inversion
 	$('#volume-full-checkbox').prop('checked', true).change(); // Resetting show volume
 	

@@ -35423,7 +35423,8 @@ x3dom.registerNodeType("VolumeData", "VolumeRendering", defineClass(x3dom.nodeTy
             this.vrcSinglePassShader.addChild(this.vrcSinglePassShaderFieldOffset, 'fields');
             this.offsetInterval = window.setInterval((function(aTex, obj) {
                 return function() {
-                    x3dom.debug.logInfo('[VolumeRendering][VolumeData] Looking for Volume Texture size...');
+                    // Disable repetitive logging (chris526)
+                    //x3dom.debug.logInfo('[VolumeRendering][VolumeData] Looking for Volume Texture size...');
                     var s = obj.getTextureSize(aTex);
                     if (s.valid) {
                         clearInterval(obj.offsetInterval);

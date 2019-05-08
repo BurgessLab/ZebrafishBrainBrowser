@@ -86,16 +86,29 @@ function updateProjMarkers() {
 		var zW = $('#z-window').width() * window.devicePixelRatio;
 		var zH = $('#z-window').height() * window.devicePixelRatio;
 		
+    // Adjust absolute coordinates for current zoom/pan frustum in each window (see zoom.js)
+    var fovX = parseFloat($('#view-x').attr('fieldOfView'));
+    var fovY = parseFloat($('#view-y').attr('fieldOfView'));
+    var fovZ = parseFloat($('#view-z').attr('fieldOfView'));
+    
+    var [xP1x, xP1y] = zoomTransform(xPointX1 * xW, (1 - xPointY1) * xH, fovX, camXPos[0], camXPos[1], X_CAM_DIST, xW, xH, Y_SIZE, Z_SIZE, -1);
+    var [yP1x, yP1y] = zoomTransform(yPointX1 * yW, (1 - yPointY1) * yH, fovY, camYPos[0], camYPos[1], Y_CAM_DIST, yW, yH, X_SIZE, Z_SIZE, -1);
+    var [zP1x, zP1y] = zoomTransform(zPointX1 * zW, (1 - zPointY1) * zH, fovZ, camZPos[0], camZPos[1], Z_CAM_DIST, zW, zH, X_SIZE, Y_SIZE, -1);
+    
+    var [xP2x, xP2y] = zoomTransform(xPointX2 * xW, (1 - xPointY2) * xH, fovX, camXPos[0], camXPos[1], X_CAM_DIST, xW, xH, Y_SIZE, Z_SIZE, -1);
+    var [yP2x, yP2y] = zoomTransform(yPointX2 * yW, (1 - yPointY2) * yH, fovY, camYPos[0], camYPos[1], Y_CAM_DIST, yW, yH, X_SIZE, Z_SIZE, -1);
+    var [zP2x, zP2y] = zoomTransform(zPointX2 * zW, (1 - zPointY2) * zH, fovZ, camZPos[0], camZPos[1], Z_CAM_DIST, zW, zH, X_SIZE, Y_SIZE, -1);
+    
 		// Updating first marker location in slicer windows
 		// not(.proj-x) indicates this value should not be changed in the projection windows
-		$('.' + val + '-volume-x:not(.proj-x)').attr('markerLoc1', (xPointX1 * xW) + ' ' + ((1 - xPointY1) * xH) + ' 0.0');
-		$('.' + val + '-volume-y:not(.proj-y)').attr('markerLoc1', (yPointX1 * yW) + ' ' + ((1 - yPointY1) * yH) + ' 0.0');
-		$('.' + val + '-volume-z:not(.proj-z)').attr('markerLoc1', (zPointX1 * zW) + ' ' + ((1 - zPointY1) * zH) + ' 0.0');
+		$('.' + val + '-volume-x:not(.proj-x)').attr('markerLoc1', xP1x + ' ' + xP1y + ' 0.0');
+		$('.' + val + '-volume-y:not(.proj-y)').attr('markerLoc1', yP1x + ' ' + yP1y + ' 0.0');
+		$('.' + val + '-volume-z:not(.proj-z)').attr('markerLoc1', zP1x + ' ' + zP1y + ' 0.0');
 		
 		// Updating second marker location
-		$('.' + val + '-volume-x:not(.proj-x)').attr('markerLoc2', (xPointX2 * xW) + ' ' + ((1 - xPointY2) * xH) + ' 0.0');
-		$('.' + val + '-volume-y:not(.proj-y)').attr('markerLoc2', (yPointX2 * yW) + ' ' + ((1 - yPointY2) * yH) + ' 0.0');
-		$('.' + val + '-volume-z:not(.proj-z)').attr('markerLoc2', (zPointX2 * zW) + ' ' + ((1 - zPointY2) * zH) + ' 0.0');
+		$('.' + val + '-volume-x:not(.proj-x)').attr('markerLoc2', xP2x + ' ' + xP2y + ' 0.0');
+		$('.' + val + '-volume-y:not(.proj-y)').attr('markerLoc2', yP2x + ' ' + yP2y + ' 0.0');
+		$('.' + val + '-volume-z:not(.proj-z)').attr('markerLoc2', zP2x + ' ' + zP2y + ' 0.0');
 		
 		// Updating whether first marker should be rendered (i.e. first partial projection selection is made)
 		$('.' + val + '-volume-x:not(.proj-x)').attr('renderMarker1', xProjMarked1 ? 1.0 : 0.0);
@@ -155,10 +168,14 @@ function setPartialProj(id, evt) {
 		// Normalizing location of click to 0-1
 		var posX = pX / boxW;
 		var posY = pY / boxH;
-		
+    
 		// Checking which window was clicked
 		if(id == 'x') {
-			// Getting range of selection in y and z windows
+      // Transform from view frustum coordinates to absolute normalized coordinates (see zoom.js)
+      var fovX = parseFloat($('#view-x').attr('fieldOfView'));
+      [posX, posY] = zoomInverseTransform(posX, posY, fovX, camXPos[0], camXPos[1], X_CAM_DIST, Y_SIZE, Z_SIZE, -1, 1);
+      
+      // Getting range of selection in y and z windows
 			var y1 = 1 - posX;
 			var y2 = 1 - xPointX1;
 			
@@ -174,6 +191,9 @@ function setPartialProj(id, evt) {
 			toggleMaxProj(true, 'y', Math.min(y1, y2), Math.max(y1, y2));
 			toggleMaxProj(true, 'z', Math.min(z1, z2), Math.max(z1, z2));
 		} else if(id == 'y') { // See similar comments above
+      var fovY = parseFloat($('#view-y').attr('fieldOfView'));
+      [posX, posY] = zoomInverseTransform(posX, posY, fovY, camYPos[0], camYPos[1], Y_CAM_DIST, X_SIZE, Z_SIZE, -1, 1);
+      
 			var x1 = posX;
 			var x2 = yPointX1;
 			
@@ -187,6 +207,9 @@ function setPartialProj(id, evt) {
 			toggleMaxProj(true, 'x', Math.min(x1, x2), Math.max(x1, x2));
 			toggleMaxProj(true, 'z', Math.min(z1, z2), Math.max(z1, z2));
 		} else { // See similar comments above
+      var fovZ = parseFloat($('#view-z').attr('fieldOfView'));
+      [posX, posY] = zoomInverseTransform(posX, posY, fovZ, camZPos[0], camZPos[1], Z_CAM_DIST, X_SIZE, Y_SIZE, -1, 1);
+      
 			var x1 = posX;
 			var x2 = zPointX1;
 			
@@ -217,12 +240,22 @@ function setPartialProj(id, evt) {
 		
 		// Saving click location for relevant window
 		if(id == 'x') {
+      // Transform from view frustum coordinates to absolute normalized coordinates (see zoom.js)
+      var fovX = parseFloat($('#view-x').attr('fieldOfView'));
+      [posX, posY] = zoomInverseTransform(posX, posY, fovX, camXPos[0], camXPos[1], X_CAM_DIST, Y_SIZE, Z_SIZE, -1, 1);
+      
 			xPointX1 = posX;
 			xPointY1 = posY;
 		} else if(id == 'y') {
+      var fovY = parseFloat($('#view-y').attr('fieldOfView'));
+      [posX, posY] = zoomInverseTransform(posX, posY, fovY, camYPos[0], camYPos[1], Y_CAM_DIST, X_SIZE, Z_SIZE, -1, 1);
+      
 			yPointX1 = posX;
 			yPointY1 = posY;
 		} else {
+      var fovZ = parseFloat($('#view-z').attr('fieldOfView'));
+      [posX, posY] = zoomInverseTransform(posX, posY, fovZ, camZPos[0], camZPos[1], Z_CAM_DIST, X_SIZE, Y_SIZE, -1, 1);
+      
 			zPointX1 = posX;
 			zPointY1 = posY;
 		}

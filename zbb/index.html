@@ -53,6 +53,7 @@
 	<script src="js/customLines.js"></script>  <!-- Custom line loading -->
 	<script src="js/vr.js"></script>  <!-- Linking to VR -->
 	<script src="js/andIntersection.js"></script>  <!-- Creating AND intersections of two lines -->
+  <script src="js/zoom.js"></script>  <!-- Zoom and pan controls -->
 	<script src="js/construction.js"></script>  <!-- Constructs anatomy and Lines menu lists when page loads -->
 	<script src="js/ready.js"></script>  <!-- Note: This file should be included last -->  <!-- Binds user input events and calls relevant functions when page first loads -->
 	
@@ -905,6 +906,12 @@
 					
 					<!-- Spatial search content -->
 					<div id="spatial-search-div">
+            <!-- Warning message when not fully-zoomed out -->
+            <p id="ss-zoom-warning" style="color: #ff4646; font-style: italic;">Press Z to reset zoom in order to perform a spatial search</p>
+            
+            <!-- Warning that zooming is disabled while performing a spatial search -->
+            <p id="ss-zoom-disabled" style="color: #feca1d; font-style: italic;">Note: Zooming is disabled while performing a spatial search</p>
+            
 						<!-- Start search button -->
 						<button id="ss-start-btn" class="btn btn-sm btn-warning" type="button" onclick="startSearch()">Start</button>
 						
