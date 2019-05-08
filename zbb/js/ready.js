@@ -9,9 +9,22 @@ var colorsAdjusting = false; // Checks if individual settings panel height is cu
 var colorsMouseY = 0; // Current y position of mouse on the page, used for tracking individual settings panel height
 var lastColorsLoc = 0.33333; // Keeps track of last set height of individual settings panel (33.333% height by default, should match values in individualSettings.css)
 
+var browser = 'Chrome'; // Default assumption
+
 // Function that's called when every part of page has downloaded
 // This function should be edited whenever you add/edit something you want to occur as soon as the page loads
 function docReady() {
+  // Check browser type
+  if(navigator.userAgent.includes('Edge')) {
+    browser = 'Edge';
+  } else if(navigator.userAgent.includes('Chrome')) {
+    browser = 'Chrome';
+  } else if(navigator.userAgent.includes('Safari')) {
+    browser = 'Safari';
+  } else if(navigator.userAgent.includes('Firefox')) {
+    browser = 'Firefox';
+  }
+  
 	// Sets positions/dimensions of windows/sliders in left panel
 	// This was primarily useful back when the user had 4 layout options, but should now be left untouched
 	setLayout();
@@ -297,13 +310,13 @@ $(document).ready(docReady);
 // Binds scroll-to-zoom and panning functions to events
 function bindZoomFunctions() {
   // Scroll-to-zoom functionality, see zoom.js
-  $('#x3dom-x-window-canvas').bind('mousewheel', function(evt) { // Binding to canvas element generated for x window
+  $('#x3dom-x-window-canvas').on('wheel', function(evt) { // Binding to canvas element generated for x window
     scrollToZoom(evt, '#view-x');
   });
-  $('#x3dom-y-window-canvas').bind('mousewheel', function(evt) { // Binding to canvas element generated for y window
+  $('#x3dom-y-window-canvas').on('wheel', function(evt) { // Binding to canvas element generated for y window
     scrollToZoom(evt, '#view-y');
   });
-  $('#x3dom-z-window-canvas').bind('mousewheel', function(evt) { // Binding to canvas element generated for z window
+  $('#x3dom-z-window-canvas').on('wheel', function(evt) { // Binding to canvas element generated for z window
     scrollToZoom(evt, '#view-z');
   });
   

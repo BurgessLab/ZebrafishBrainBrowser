@@ -39,7 +39,15 @@ function scrollToZoom(evt, view) {
     return;
   }
   
-  var scrollAmt = evt.originalEvent.wheelDelta;
+  // Normalize mouse wheel delta across browsers
+  var speedMultiplier = 1;
+  if(browser == 'Firefox') {
+    speedMultiplier = 66.667;
+  } else if(browser == 'Edge') {
+    speedMultiplier = 0.752;
+  }
+  
+  var scrollAmt = -evt.originalEvent.deltaY * speedMultiplier;
   var fovPrev = parseFloat($(view).attr('fieldOfView'));
   var newFov = fovPrev - scrollAmt * ZOOM_SPEED;
   
