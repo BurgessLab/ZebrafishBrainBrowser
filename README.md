@@ -12,7 +12,7 @@ The latest production version of the browser is available at [zbbrowser.com](zbb
 
 ### High
 
-- [ ] Scroll to zoom, z to reset
+- [X] Scroll to zoom, z to reset
 - [ ] Color key in bottom right of Z window
 - [ ] Share and load configurations with URL codes (selected lines, slice numbers, volume orientations, etc.)
 - [ ] Hide/show 100-micron scale bar that changes with zoom in top-left of Z window
