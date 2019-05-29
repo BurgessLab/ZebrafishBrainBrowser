@@ -8,6 +8,14 @@ The latest production version of the browser is available at [zbbrowser.com](zbb
 - [ViBE-Z](http://vibez.informatik.uni-freiburg.de/)
 - [Z-Brain](https://engertlab.fas.harvard.edu/Z-Brain/#/home/)
 
+## Project Setup
+
+1. Fork the project if you're not a collaborator
+2. Clone the project onto your machine
+3. Download 'res.zip' from [here](https://drive.google.com/file/d/1lryYfr_fp5two4IxqrZO1-rm4F3_Gmy3/view?usp=sharing) (1 GB)
+4. Extract 'res.zip' and place the 'res/' folder in the 'zbb/' folder (This folder is ignored by Git because of its size)
+5. Begin working
+
 ## TODO
 
 ### High
