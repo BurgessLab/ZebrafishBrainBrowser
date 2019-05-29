@@ -49,7 +49,7 @@ function scrollToZoom(evt, view) {
   
   var scrollAmt = -evt.originalEvent.deltaY * speedMultiplier;
   var fovPrev = parseFloat($(view).attr('fieldOfView'));
-  var newFov = fovPrev - scrollAmt * ZOOM_SPEED;
+  var newFov = fovPrev + scrollAmt * ZOOM_SPEED;
   
   // Zoomed all the way in
   if(newFov < MIN_FOV) {
