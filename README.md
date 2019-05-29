@@ -15,11 +15,11 @@ The latest production version of the browser is available at [zbbrowser.com](htt
 3. Download 'res.zip' from [here](https://drive.google.com/file/d/1lryYfr_fp5two4IxqrZO1-rm4F3_Gmy3/view?usp=sharing) (1 GB)
 4. Extract 'res.zip' and place the 'res/' folder in the 'zbb/' folder (The 'res/' folder is included in the .gitignore because of its size)
 5. Local development in Chrome leads to some cross-origin issues with the volume rendering windows. If you wish to do development in Chrome (recommended), it's suggested you disable cross-origin restrictions by doing the following:
-  - Create a folder called 'CrossOriginUserData' in 'C:\Users\[CurrentUser]\AppData\Local\Google\Chrome\', or wherever your 'Chrome/' folder is located
-  - Create a new shortcut to the Chrome executable, which is likely found at 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe'
-  - Right click on the shortcut and select 'Properties'
-  - Add the following to the end of the 'Target' text box entry: ' --disable-web-security --user-data-dir="C:\Users\[CurrentUser]\AppData\Local\Google\Chrome\CrossOriginUserData"'. Note that the 'user-data-dir' field should be adjusted to the path of the folder you created in the first step.
-  - Open a new Chrome window using this shortcut whenever doing development. **NOTE:** It is highly recommended you only use this window for development on the brain browser, as browsing other sites may be a security risk.
+    * Create a folder called 'CrossOriginUserData' in 'C:\Users\\[CurrentUser]\AppData\Local\Google\Chrome\\', or wherever your 'Chrome/' folder is located
+    * Create a new shortcut to the Chrome executable, which is likely found at 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe'
+    * Right click on the shortcut and select 'Properties'
+    * Add the following to the end of the 'Target' text box entry (without the single quotes): ' --disable-web-security --user-data-dir="C:\Users\\[CurrentUser]\AppData\Local\Google\Chrome\CrossOriginUserData"'. Note that the 'user-data-dir' field should be adjusted to the path of the folder you created in the first step.
+    * Open a new Chrome window using this shortcut whenever doing development. **NOTE:** It is highly recommended you only use this window for development on the brain browser, as browsing other sites may be a security risk.
 6. Open index.html in this new Chrome window
 7. Disabling the browser cache is recommended. To do this in Chrome, press F12 to open the developer console, navigate to the 'Network' tab and select the 'Disable cache' checkbox. Keep the developer console open while working.
 
