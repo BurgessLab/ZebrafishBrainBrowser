@@ -2,7 +2,7 @@
 
 The Zebrafish Brain Browser is a tool for visualizing 3D expression within the brain of zebrafish transgenic lines. More than 200 of the available lines were created at the NICHD at the National Institutes of Health.
 
-The latest production version of the browser is available at [zbbrowser.com](zbbrowser.com). Similar projects are listed below:
+The latest production version of the browser is available at [zbbrowser.com](http://zbbrowser.com). Similar projects are listed below:
 
 - [Brain Browser](https://science.nichd.nih.gov/confluence/display/burgess/Brain+Browser)
 - [ViBE-Z](http://vibez.informatik.uni-freiburg.de/)
