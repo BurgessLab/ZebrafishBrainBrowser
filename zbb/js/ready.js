@@ -303,6 +303,7 @@ function docReady() {
 	setTimeout(function() {
 		resetIndividual(HUC_CER[0]);
     bindZoomFunctions(); // Must be bound after delay to work consistently
+    prepareURLCodes(); // Load URL code state after everything else is ready, see urlCodes.js
 	}, 250); // Time delayed before reset in milliseconds
 }
 $(document).ready(docReady);
@@ -335,7 +336,7 @@ var keysDown = [];
 function setShortcuts() {
 	// Event where any key is pressed
 	$(document).keydown(function(evt) {
-		if(evt.target.id !== 'text-search-text' && !evt.target.className.includes('number-input') && evt.target.id !== 'custom-line-name-input') { // Making sure the user is not currently typing into one of the input fields
+		if(evt.target.id !== 'text-search-text' && !evt.target.className.includes('number-input') && evt.target.id !== 'custom-line-name-input' && evt.target.id !== 'url-code-field') { // Making sure the user is not currently typing into one of the input fields
 			var key = evt.key.toLowerCase(); // Getting lower case version of key pressed so shift is irrelevant
 			
 			// Making sure key has not already been pressed without being released

@@ -56,6 +56,12 @@ function scrollToZoom(evt, view) {
     newFov = MIN_FOV;
   }
   
+  // Set new FOV
+  updateFov(view, newFov);
+}
+
+// Sets the fov for a given window after zoom occurs
+function updateFov(view, newFov) {
   // Calculate camera constraints so volume isn't offscreen
   if(view == '#view-x') { // X camera
     var halfFrustumHeight = camXPos[2] * Math.tan(0.5 * newFov);
@@ -134,10 +140,7 @@ function panCamera(newMouseX, newMouseY) {
     var distY = deltaY / containerHeight * fovMul * Z_SIZE;
     
     // Apply to x camera
-    camXPos[0] -= distX;
-    camXPos[1] += distY;
-    applyMaxPan('x');
-    $('#view-x').attr('position', camXPos[0] + ',' + camXPos[1] + ',' + camXPos[2]);
+    updatePan(distX, distY, 'x');
   } else if(screenHeld == 'y') { // Y window
     var containerWidth = $('#x3dom-y-window-canvas').width();
     var containerHeight = $('#x3dom-y-window-canvas').height();
@@ -149,10 +152,7 @@ function panCamera(newMouseX, newMouseY) {
     var distY = deltaY / containerHeight * fovMul * Z_SIZE;
     
     // Apply to y camera
-    camYPos[0] -= distX;
-    camYPos[1] += distY;
-    applyMaxPan('y');
-    $('#view-y').attr('position', camYPos[0] + ',' + camYPos[1] + ',' + camYPos[2]);
+    updatePan(distX, distY, 'y');
   } else { // Z window
     var containerWidth = $('#x3dom-z-window-canvas').width();
     var containerHeight = $('#x3dom-z-window-canvas').height();
@@ -163,6 +163,26 @@ function panCamera(newMouseX, newMouseY) {
     var distX = deltaX / containerWidth * fovMul;
     var distY = deltaY / containerHeight * fovMul * Y_SIZE;
     
+    // Apply to z camera
+    updatePan(distX, distY, 'z');
+  }
+}
+
+// Moves camera by specified amount in specified view
+function updatePan(distX, distY, view) {
+  if(view == 'x') { // X window
+    // Apply to x camera
+    camXPos[0] -= distX;
+    camXPos[1] += distY;
+    applyMaxPan('x');
+    $('#view-x').attr('position', camXPos[0] + ',' + camXPos[1] + ',' + camXPos[2]);
+  } else if(view == 'y') { // Y window
+    // Apply to y camera
+    camYPos[0] -= distX;
+    camYPos[1] += distY;
+    applyMaxPan('y');
+    $('#view-y').attr('position', camYPos[0] + ',' + camYPos[1] + ',' + camYPos[2]);
+  } else { // Z window
     // Apply to z camera
     camZPos[0] -= distX;
     camZPos[1] += distY;

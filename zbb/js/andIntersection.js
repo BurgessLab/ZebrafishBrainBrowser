@@ -7,7 +7,7 @@
 const AND_VIS_ID = 'and-intersection';
 
 // IDs of first and second lines selected for intersection
-// These values will always be empty ('') whenever not intersection is currently selected
+// These values will always be empty ('') whenever no intersection is currently selected
 var firstLineBeingIntersected = '';
 var secondLineBeingIntersected = '';
 

@@ -70,7 +70,7 @@ function changeSpanColor(spanID, spanColor) { // spanID contains the ID of the l
 
 // Changes a line's volume color
 function changeColor(spanColor, r, g, b, spanID, id) {
-	// Changing color of line's slicer and 3D volumes
+  // Changing color of line's slicer and 3D volumes
 	$('.' + id + '-volume-x').attr('baseColor', r + ' ' + g + ' ' + b);
 	$('.' + id + '-volume-y').attr('baseColor', r + ' ' + g + ' ' + b);
 	$('.' + id + '-volume-z').attr('baseColor', r + ' ' + g + ' ' + b);
@@ -86,6 +86,9 @@ function changeColor(spanColor, r, g, b, spanID, id) {
 	// Changing color button's background color
 	changeSpanColor(spanID, spanColor);
 	
+  // Save span color as an attribute
+  $('#' + id + '-settings-header').attr('spanColor', spanColor);
+  
 	// Changing line name's text color to white for certain line colors (to better match background)
 	// Colors specified in the if-statement below will turn text white
 	if(spanColor == 'col-4' || spanColor == 'col-6' || spanColor == 'col-7' || spanColor == 'col-11' || spanColor == 'col-12' || spanColor == 'col-14' || spanColor == 'col-15') {

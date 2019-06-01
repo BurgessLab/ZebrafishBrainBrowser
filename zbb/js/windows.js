@@ -16,6 +16,10 @@ var pushed = [HUC_CER[0]]; // All lines that have been turned on (these lines st
 var addedSelections = []; // All selected z-brain regions
 var addedPajevicSelections = []; // All selected pajevic regions
 
+// Keeps track of currently checked anatomy checkboxes, used for URL codes, see urlCodes.js
+var currentZbrainCheckboxes = [];
+var currentPajevicCheckboxes = [];
+
 // These keep track of which windows are currently in fullscreen mode
 var xFull = false;
 var yFull = false;
@@ -634,7 +638,9 @@ function appendPajevicRegionSelection(num) {
 }
 
 // Turns on/off a z-brain region volume
-function toggleRegionSelection(num, checked) {
+function toggleRegionSelection(num, checkbox) {
+  var checked = checkbox.checked;
+  
 	if(includes(EXISTING_ZBRAIN_SECTORS, num)) { // Checking to make sure number is valid color ID
 		if(checked) {
 			if(!includes(addedSelections, num)) {
@@ -644,6 +650,8 @@ function toggleRegionSelection(num, checked) {
 			currRender.push('anatomy-selection-' + num); // Adding to current render
 			$('.anatomy-selection-' + num + '-data').attr('render', 'true'); // Setting X3DOM render value to true
 			updateCurrRender(); // Updating settings values of current render
+      
+      currentZbrainCheckboxes.push(checkbox.id);
 		} else {
 			// Removing anatomical selection from current render
 			var index = currRender.indexOf('anatomy-selection-' + num);
@@ -652,6 +660,13 @@ function toggleRegionSelection(num, checked) {
 				currRender.splice(index, 1);
 				$('.anatomy-selection-' + num + '-data').attr('render', 'false');
 			}
+      
+      // Remove from currently-selected checkboxes
+      var checkboxIndex = currentZbrainCheckboxes.indexOf(checkbox.id);
+      
+      if(checkboxIndex > -1) {
+        currentZbrainCheckboxes.splice(checkboxIndex, 1);
+      }
 		}
 	}
 	
@@ -684,7 +699,9 @@ function toggleRegionSelection(num, checked) {
 // Turns on/off a pajevic region volume
 // This function does essentially the same thing as the z-brain function, but without adding/removing from VR list and without jumping to anatomy location, are these are necessary for pajevic regions
 // See comments in function above for details
-function togglePajevicRegionSelection(num, checked) {
+function togglePajevicRegionSelection(num, checkbox) {
+  var checked = checkbox.checked;
+  
 	if(includes(EXISTING_PAJEVIC_SECTORS, num)) {
 		if(checked) {
 			if(!includes(addedPajevicSelections, num)) {
@@ -694,6 +711,8 @@ function togglePajevicRegionSelection(num, checked) {
 			currRender.push('anatomy-pajevic-selection-' + num);
 			$('.anatomy-pajevic-selection-' + num + '-data').attr('render', 'true');
 			updateCurrRender();
+      
+      currentPajevicCheckboxes.push(checkbox.id);
 		} else {
 			var index = currRender.indexOf('anatomy-pajevic-selection-' + num);
 			
@@ -701,6 +720,13 @@ function togglePajevicRegionSelection(num, checked) {
 				currRender.splice(index, 1);
 				$('.anatomy-pajevic-selection-' + num + '-data').attr('render', 'false');
 			}
+      
+      // Remove from currently-selected checkboxes
+      var checkboxIndex = currentPajevicCheckboxes.indexOf(checkbox.id);
+      
+      if(checkboxIndex > -1) {
+        currentPajevicCheckboxes.splice(checkboxIndex, 1);
+      }
 		}
 	}
 	
