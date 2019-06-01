@@ -28,13 +28,14 @@ The latest production version of the browser is available at [zbbrowser.com](htt
 ### High
 
 - [X] Scroll to zoom, z to reset
+- [X] Share and load configurations with URL codes (selected lines, slice numbers, volume orientations, etc.)
 - [ ] Color key in bottom right of Z window
-- [ ] Share and load configurations with URL codes (selected lines, slice numbers, volume orientations, etc.)
 - [ ] Hide/show 100-micron scale bar that changes with zoom in top-left of Z window
 
 ### Medium
 
 - [ ] Bug: Color darkens in Z window at slice 117
+- [ ] Bug: Full anatomy (z-brain and pajevic) doesn't show up in 3D volume window when loading from URL code
 - [ ] Start VR mode at similar angle as 3D volume view
 
 ### Low

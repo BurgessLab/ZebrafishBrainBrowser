@@ -377,8 +377,6 @@ function generateURLCode() {
   }
   state.projections = projections;
   
-  console.log(state); // TODO: remove
-  
   // Encoding and constructing full URL string
   var codeStr = JSON.stringify(state);
   var encodedStr = encodeURI(codeStr);
