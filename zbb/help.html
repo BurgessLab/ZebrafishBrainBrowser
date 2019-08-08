@@ -1,0 +1,223 @@
+<html>
+
+<body style="margin:20;">
+  <!-- About Section -->
+  <div id="about">
+    <h><strong>Zebrafish Brain Browser Project</strong></h>
+    <p>The Zebrafish Brain Browser (ZBB) enables visualization of the 3D expression patterns of transgenic
+      and enhancer trap lines in zebrafish, developed by the Burgess lab at the Eunice Kennedy Shriver
+      National Institute for Child Health and Human Development, in collaboration with the Advanced
+      Research Computing group at Virginia Tech.
+    </p>
+    <p>The atlas includes brain images of transgenic lines scanned at high resolution and registered
+      to a reference brain so that all lines can be compared in the same spatial framework. For more
+      information, please see:
+      <a href="https://science.nichd.nih.gov/confluence/display/burgess/Brain+Browser">
+        https://science.nichd.nih.gov/confluence/display/burgess/Brain+Browser</a></p>
+    <p> There are two interfaces for ZBB. You are currently looking at the online version
+      (<a href="zbbrowser.com">zbbrowser.com</a>).
+      You can download a desktop version from the link above.</p>
+    <p> The online version runs in any web browser. Javascript must be not be disabled.
+      If accessing ZBB from an older computer or laptop, you may need to select 'L' (low)
+      resolution from the Settings Tab and deselect the 'Show Volume' option. You will probably not be able
+      to use Virtual Reality mode, and performance will lag if you try to view more than 2 lines at once.</p>
+  </div>
+
+  <!-- Slice and Projection Views Section -->
+  <div id="views">
+    <h><strong>Slice and Projection Views</strong></h>
+    <p>On startup, the top left, top right and bottom left windows display a single sagittal, coronal and
+      horizontal slice through the brain of a HuC:Cer transgenic larva.</p>
+    <p>The scroll bars allow you to change the position of the slice. The position (in microns) in the
+      ZBB reference brain is indicated at the bottom left corner of each image. The blue cross hairs in
+      each image indicate the position of the corresponding slices in the other two images.</p>
+    <p>Left-click on any point in any of the three images to change the position of the slices displayed
+      in the other two images. The anatomical identity (if known) at the selected point is displayed
+      beside the &#39;Region&#39; label below the 3D window. To outline the boundaries of the region that
+      includes the selected point use shift-left-click.</p>
+    <p>Zoom into an area using the mouse scroll wheel. Hold down the shift-ctrl and left-mouse button
+      to move the position of the zoomed image.</p>
+    <p>To expand the image for any plane, select the blue arrow icon in the top right of each image.
+      Return to the multiple-slice view by clicking on the same icon</p>
+    <p>The top-left corner of the sagittal (top left) image provides a color-coded indication of the lines
+      currently selected.</p>
+    <p>To see a maximum projection through any plane, select the &#39;Max&#39; button in the top-right of each
+      image. Return to a single slice view by clicking &#39;Slice&#39;. You can also generate partial projections
+      through selected brain subregions by right-clicking twice in one image to designate the
+      boundaries of the partial projection. A yellow line indicates the boundaries. For example, if you
+      right-click slightly to the left and right of the olfactory placodes in the horizontal (bottom-right)
+      plane, the coronal view (top-right) will now show a coronal projection of the olfactory bulbs.
+      Clear a projection and return to single-slice view by selecting &#39;Slice&#39;.</p>
+    <p>Summary of mouse controls:
+      <br>Left button: change selected slices
+      <br>Shift-left button: display anatomical region around selected point
+      <br>Scroll wheel: zoom
+      <br>Control-shift-left button: pan zoomed image
+      <br>Right button: set boundaries for partial projections</p>
+    <p>Keyboard shortcuts:
+      <br>a: show all anatomical regions
+      <br>f: find text match
+      <br>m: maximum projections
+      <br>x: toggle cross-hairs
+      <br>z: reset to 1x zoom
+      <br>1-9: show/hide selected line</p>
+  </div>
+
+  <!-- 3D Projection Section -->
+  <div id="3d">
+    <h><strong>3D Projection</strong></h>
+    <p>The bottom-right image is a 3D rendering of the brain volume. Use the mouse to rotate and
+      zoom the 3D image:</p>
+    <p>Left button: free-rotation of the 3D perspective
+      <br>Right button: zoom
+      <br>Control left button: pan image</p>
+    <p>Clicking on the axis-arrows at the bottom-right of the image start and stop rotation of the image
+      in each direction.</p>
+    <p>To reset the 3D projection to its default position, click on the grey ball in the middle of the axis-
+      arrows.</p>
+    <p>Expand the 3D view using the arrow icon at the top-right of the image.</p>
+    <p>Click on the VR icon to open a new browser window for a virtual-reality 3D view of the brain.
+      The virtual reality view is designed to work either with Google Cardboard or using a wide-view
+      side-by-side viewer to produce a stereo image from the images on the monitor.</p>
+    <p>For Cardboard you need to access the website using your cellphone, select the lines you are
+      interested in, then slip the phone into a cardboard viewer. Depressing the cardboard button
+      moves you forward in whatever direction you are currently looking. You will need a high-end
+      phone and may still be limited in the number of lines that you can have simultaneously
+      displayed.</p>
+    <p>For side-by-side viewing you need a wide-view stereo viewer to produce a stereo view from the
+      two images on your computer monitor. We use catalog #PVN-SWV from 3dstereo.com (also
+      available from Amazon). Left mouse button rotates. Scroll wheel to zoom. Shift-left to pan.</p>
+    <p>You can toggle visibility of lines using the checkboxes at the top of the window.</p>
+  </div>
+
+  <!-- Lines Tab Section -->
+  <div id="lines">
+    <h><strong>Lines Tab</strong></h>
+    <p>ZBB contains image stacks for around 250 transgene expression patterns. Patterns are organized
+      into four tabs:
+      <br>- Transgenic: transgenic lines using BAC recombination or defined promoters to drive a
+      reporter
+      <br>- Gal4: enhancer traps expressing Gal4
+      <br>- Cre: enhancer traps expresssing Cre
+      <br>- Misc: everything else (immunohistochemistry, dye fills, various other enhancer traps)</p>
+    <p>Each tab contains a list of lines with a checkbox, the name of the line, and a reference for the
+      line (generally where it was first published). Clicking on the reference opens a new browser tab
+      with the corresponding PubMed entry.</p>
+    <p>Clicking on the checkbox for a line downloads its image stack and adds it to the brain view. Use
+      the control panel at the bottom of the tab to change the display color and intensity.</p>
+    <p>Finally, the &#39;Custom&#39; tab allows you to:
+      <br>(1) Load your own data into the browser.
+      <br>(2) Generate a new pattern that is the predicted intersect of currently selected patterns.</p>
+  </div>
+
+  <!-- Control Panel Section -->
+  <div id="control">
+    <h><strong>Control Panel</strong></h>
+    <p>The control panel allows you to adjust the display for each currently selected line, and access
+      further information.</p>
+    <p>The name of the line is displayed in a button on the left. Click on the button to reveal a color
+      palette and select a new display color. Click on the button again to close the palette. The
+      bottom-right element in the palette is the ImageJ Fire look-up table.</p>
+    <p>Brightness/contrast are adjusted using the sliders or by directly entering values in the fields to
+      the right of the sliders.</p>
+    <p>On the right side of the line beside the name of the line are 5 additional icons. From right to left:
+      <br>- X: removes this line from the display
+      <br>- Reset: returns brightness/contrast/color to defaults.
+      <br>- i: opens a pop-up window with more information about the line including links to PubMed
+      records for its generation and confocal scanning, and ZFIN entry (click-through to ZIRC to
+      order lines). Anatomical annotation and genomic integration site is also provided if available.
+      <br>- eye icon: toggle visibility of line
+      <br>- number (1-9): keyboard shortcut for toggling visibility</p>
+  </div>
+
+  <!-- Anatomy Tab Section -->
+  <div id="anatomy">
+    <h><strong>Anatomy Tab</strong></h>
+    <p>Show boundaries of either manually annotated neuroanatomical regions (Z-Brain, Randlett et al
+      Nature Methods 2015) or computationally derived regions (Pajevic, Gupta et al Methods 2018).</p>
+    <p>First, select either the &#39;Z-Brain&#39; or &#39;Pajevic&#39; button at the top of the tab. Then use checkboxes to
+      toggle display of different regions. The Z-Brain regions are organized by larger brain areas.</p>
+    <p>The Reset button turns off all selected regions.</p>
+  </div>
+
+  <!-- Aliases Tab Section -->
+  <div id="aliases">
+    <h><strong>Aliases Tab</strong></h>
+    <p>Quickly find cell-types or brain regions of interest that are well-labeled by specific transgenic
+      lines. These are simply shortcuts to finding specific transgenic lines that label structures of
+      interest. In most cases a selected line also labels other structures, and may not label all of the
+      selected structure.</p>
+    <p>Selecting a checkbox simply loads the corresponding transgenic line. Its display qualities can
+      then be adjusted using the control panel.</p>
+  </div>
+
+  <!-- Search Tab Section -->
+  <div id="search">
+    <h><strong>Search Tab</strong></h>
+    <p>The Brain Browser provides two kinds of search: spatial or text. Use the buttons at the top of
+      the tab to chose spatial or text.</p>
+    <p>Text search: Enter free text in the &#39;search&#39; field. As you type, all information (including
+      anatomical information, integration site, publications history etc) associated with a line is
+      searched and matches displayed in a table below.</p>
+    <p>Spatial search: Search for lines that show expression in a selected 3-dimensional volume.
+      <br>Steps:
+      <br>(1) Click the orange &#39;Start&#39; button.
+      <br>(2) Hold down the left-mouse button to select an area in any of the three slice windows.
+      <br>(3) Hold down the left mouse button in a different slice window to complete the volume</p>
+    <p>The selected volume is indicated as a yellow box visible in the slice windows. Lines that
+      express reporter in the selected volume are displayed in the table below, with the line name and
+      the percentage of the volume selected that is labeled by that line.</p>
+  </div>
+
+  <!-- Section Tab Section -->
+  <div id="settings">
+    <h><strong>Settings Tab</strong></h>
+    <p>If ZBB is laggy on your computer, then (1) Turn off &#39;Show Volume&#39; and (2) Select Low
+      resolution.</p>
+    <p>Invert color - flips color-scales so that the brain is grey on a white-background (and all other
+      colors are simply inverted as well).</p>
+    <p>Show volume - toggles display of the bottom-right 3D view of the brain. Deselect this on less
+      powerful computers to improve performance.</p>
+    <p>Show cross-hairs - toggles visibility of the cross-hairs that indicate the plane of section for each
+      slice view.</p>
+    <p>Hide annotations - select to remove all annotations in the slice windows - useful if you are
+      taking a screenshot.</p>
+    <p>Projection depth coding - color-codes lines by depth when in a projection view (no effect in
+      slice view).</p>
+    <p>Resolution - select either Low, Medium or High image quality. Selecting Low will improve
+      rendering performance by your computer, and download speed from our servers.</p>
+    <p>Window Size - to best fit your monitor, select either Small, Medium or Large to adjust the
+      relative size of the image slices and tab windows</p>
+  </div>
+
+  <!-- Data Tab Section -->
+  <div id="data">
+    <h><strong>Download Tab</strong></h>
+    <p>Options to download a stack with all lines that are selected, or the current set of slices.</p>
+    <p>Download the currently selected stack as a set of 419 horizontal images. The png images are in
+      a compressed folder that you can unzip. If multiple lines are selected, the stack will simply be
+      the composite of these lines with the existing colors as currently displayed on your screen.</p>
+    <p>Note, image quality will be inferior to the original data, which is also available:
+      <br>Gal4 lines (confocal scans/averages):
+      <a href="http://gigadb.org/dataset/100322">http://gigadb.org/dataset/100322</a>
+      <br>Cre lines (confocal scans/averages):
+      <a href="https://datadryad.org/resource/doi:10.5061/dryad.tk467n8">https://datadryad.org/resource/doi:10.5061/dryad.tk467n8</a>
+      <br>Everything (masked averages):
+      <a href="https://zenodo.org/record/2560759">https://zenodo.org/record/2560759</a></p>
+  </div>
+
+  <!-- Share Web Link Section -->
+  <div id="share">
+    <h><strong>Share Web Link</strong></h>
+    <p>Looking at an interesting region in a specific transgenic line? This Tab lets you generate a code
+      so that you can share your current view with somebody else, including the set of lines you have
+      selected and position in the brain.
+      <br>Steps:
+      <br>(1) Click &#39;Generate&#39; to create a URL that encodes the current view
+      <br>(2) Click &#39;Copy&#39; to copy the URL to your clipboard
+      <br>(3) Paste the URL into an email to share with a colleague</p>
+    <p>The shareable URL does not include changes you have made to the resolution or screen size.</p>
+  </div>
+</body>
+
+</html>
