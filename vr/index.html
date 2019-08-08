@@ -4,160 +4,186 @@
 <!-- This page is based on the Google Cardboard Classroom Example from the X3DOM examples page https://www.x3dom.org/examples/ -->
 
 <html lang="en">
+
 <head>
-	
+
 	<!-- Page title and metadata -->
 	<title>Virtual Reality - Zebrafish Brain Browser</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	
+
 	<!-- CSS Stylesheets -->
-	<link rel="stylesheet" type="text/css" href="x3dom.css"></link>  <!-- https://www.x3dom.org/ -->
-	<link rel="stylesheet" type="text/css" href="bootstrap.min.css">  <!-- https://github.com/twbs/bootstrap -->
-	<link rel="stylesheet" type="text/css" href="styles.css"></link>  <!-- My stylesheet -->
-	
+	<link rel="stylesheet" type="text/css" href="x3dom.css"></link> <!-- https://www.x3dom.org/ -->
+	<link rel="stylesheet" type="text/css" href="bootstrap.min.css"> <!-- https://github.com/twbs/bootstrap -->
+
 	<!-- JavaScript files -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>  <!-- https://jquery.com/ -->
-	<script src="bootstrap.min.js"></script>  <!-- https://github.com/twbs/bootstrap -->
-	<script src="x3dom-full.js"></script>  <!-- https://www.x3dom.org/, some edits made by me -->
-	<script src="../zbb/js/data.js"></script>  <!-- Same data file as main page -->
-	<script src="script.js"></script>  <!-- My script -->
-	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> <!-- https://jquery.com/ -->
+	<script src="bootstrap.min.js"></script> <!-- https://github.com/twbs/bootstrap -->
+	<script src="x3dom-full-formatted.js"></script> <!-- https://www.x3dom.org/, some edits made by me -->
+	<script src="../zbb/js/data.js"></script> <!-- Same data file as main page -->
+	<script src="script.js"></script> <!-- My script -->
+
 </head>
-<body>
-	
-	<!-- X3DOM Window -->
-	<x3d id="x3d">
-		<button id="full-btn" class="btn btn-lg btn-default" type="button" onclick="fullscreen()">Fullscreen</button>  <!-- Fullscreen button -->
-		<p id="compat-message">Insert device into Google Cardboard v2 before entering Fullscreen mode.</p>  <!-- Compatibility message -->
-		
-		<!-- X3DOM scene -->
+
+<body style='width:100%; height:100%; border:0; margin:0; padding:0; background-color:black;'>
+	<div id="header">
+		<button id="full-btn" class="btn btn-lg btn-default" type="button" onclick="fullscreen()">Fullscreen</button> <!-- Fullscreen button -->
+	</div>
+	<x3d id='all_view' showStat='false' showLog='false' style='width:100%; height:100%; border:0; margin:0; padding:0;'>
 		<scene>
-			<environment frustumCulling="false"></environment>
-			<background DEF="main-bgd" skyColor="0 0 0"></background>
-			<navigationInfo headlight="false" type="NONE"></navigationInfo>
-			<viewpoint DEF="main-view" id="camera-view" position="0 10 20" centerOfRotation="0 0 0" fieldOfView="1.5" zNear="0.001" zFar="300"></viewpoint>  <!-- Main camera viewpoint, position and orientation are modified when moving in VR -->
-			
-			<!-- Lighting (set up from all 6 directions) -->
 			<directionalLight direction="0 0 1" on="TRUE" intensity='0.4' shadowIntensity="0.0"></directionalLight>
 			<directionalLight direction="0 0 -1" on="TRUE" intensity='0.4' shadowIntensity="0.0"></directionalLight>
 			<directionalLight direction="0 1 0" on="TRUE" intensity='0.4' shadowIntensity="0.0"></directionalLight>
 			<directionalLight direction="0 -1 0" on="TRUE" intensity='0.4' shadowIntensity="0.0"></directionalLight>
 			<directionalLight direction="1 0 0" on="TRUE" intensity='0.4' shadowIntensity="0.0"></directionalLight>
 			<directionalLight direction="-1 0 0" on="TRUE" intensity='0.4' shadowIntensity="0.0"></directionalLight>
-			
-			<!-- Main scene containing everything visible on screen -->
-			<group render="false">
-				<group DEF="main-group">
-					<inline url="scene.x3d"></inline>  <!-- Grid background -->
-					
-					<transform translation="0 10 0" scale="6 6 6">  <!-- Location and size of volumes -->
-						<transform rotation="1,0,0,1.5707963">  <!-- Rotating 90 degrees about the x-axis -->
-							<group id="volumes-container"></group>  <!-- Where added volumes are appended -->
+			<navigationInfo transitionTime="0.0" type="EXPLORE"></navigationInfo>
+			<background DEF='bgnd' skyColor="0 0 0"></background>
+			<transform translation='0 0 0' rotation='0 0 0 0'>
+				<viewpoint DEF='viewpoint' id='x3d_viewpoint' position='0 0 2' orientation='0 0 0 0' zNear='0.001' zFar='300'></viewpoint>
+			</transform>
+			<group id='unrendered_scene' render='false'>
+				<group DEF='scene'>
+					<transform DEF='Viewpoint-Left' id='x3d_viewpoint' translation='0 0 0' rotation='0 1 0 0'>
+						<transform DEF='Viewpoint-gamma' id='x3d_viewpoint_gamma' translation='0 0 0' rotation='0 1 0 0'>
+							<transform DEF='Viewpoint-beta' id='x3d_viewpoint_beta' translation='0 0 0' rotation='1 0 0 0'>
+								<transform DEF='Viewpoint-alpha' id='x3d_viewpoint_alpha' translation='0 0 0' rotation='0 0 1 0'>
+									<transform rotation="1,0,0,1.5707963267948966">
+										<!-- -45 degree rotation about the x-axis -->
+										<transform rotation="0,0,1,-0.7853981633974483">
+											<transform rotation="0,1,0,0.5235987755982988">
+												<group id="volumes-container"></group> <!-- Where added volumes are appended -->
+											</transform>
+										</transform>
+									</transform>
+								</transform>
+							</transform>
 						</transform>
 					</transform>
 				</group>
 			</group>
-			
-			<!-- This group manages what's seen through the left eye -->
-			<group>
+			<group DEF='left' render='true'>
 				<shape>
 					<appearance>
-						<script>
-							// Rendering to one half of the screen (full height)
-							var width = $(window).width();
-							var height = $(window).height() * 2;
-							
-							// Interpupillary distance attribute below is distance between eyes, necessary for proper stereoscopic rendering
-							document.writeln('<renderedTexture class="ren-tex" dimensions="' + width + ' ' + height + ' 4" interpupillaryDistance="0.03" stereoMode="LEFT_EYE" update="ALWAYS" repeatS="false" repeatT="false">');
-						</script>
-							<viewpoint USE="main-view" containerField="viewpoint"></viewpoint>  <!-- Using main camera viewpoint -->
-							<background USE="main-bgd" containerField="background"></background>  <!-- Using main scene background -->
-							<group USE="main-group" containerField="scene"></group>  <!-- Using all of same volumes present in main group -->
+						<renderedTexture interpupillaryDistance="0.03" id="rtLeft" stereoMode="LEFT_EYE" update='ALWAYS' dimensions='960 1080 4' repeatS='false' repeatT='false'>
+							<viewpoint USE='viewpoint' containerField='viewpoint'></viewpoint>
+							<background USE='bgnd' containerField='background'></background>
+							<group USE='scene' containerField="scene"></group>
 						</renderedTexture>
 						<composedShader>
-							<field name="tex" type="SFInt32" value="0"></field>
-							<field name="leftEye" type="SFFloat" value="1"></field>
-							
-							<!-- Vertex shader written in GLSL -->
-							<shaderPart type="VERTEX">
+							<field name='tex' type='SFInt32' value='0'></field>
+							<field name='leftEye' type='SFFloat' value='1'></field>
+							<shaderPart type='VERTEX'>
 								attribute vec3 position;
 								attribute vec2 texcoord;
-								
+
 								uniform mat4 modelViewProjectionMatrix;
 								varying vec2 fragTexCoord;
-								
+
 								void main()
 								{
-									vec2 pos = sign(position.xy);
-									fragTexCoord = texcoord;
-									gl_Position = vec4((pos.x / 2.0) - 0.5, pos.y, 0.0, 1.0); // Rendering to left half of screen
+								vec2 pos = sign(position.xy);
+								fragTexCoord = texcoord;
+								gl_Position = vec4((pos.x/2.0)-0.5, pos.y, 0.0, 1.0);
 								}
 							</shaderPart>
-							
-							<!-- Fragment shader written in GLSL -->
-							<shaderPart DEF="frag-shader" type="FRAGMENT">
+							<shaderPart DEF="frag" type='FRAGMENT'>
 								#ifdef GL_ES
 								precision highp float;
 								#endif
-								
+
 								uniform sampler2D tex;
 								uniform float leftEye;
 								varying vec2 fragTexCoord;
-								
+
 								void main()
 								{
-									gl_FragColor = texture2D(tex, fragTexCoord);
+								gl_FragColor = texture2D(tex, fragTexCoord);
 								}
 							</shaderPart>
 						</composedShader>
 					</appearance>
-					<plane solid="false"></plane>  <!-- 2D object on left half of screen being rendered to -->
+					<plane solid="false"></plane>
 				</shape>
 			</group>
-			
-			<!-- This group manages what's seen through the right eye -->
-			<group>
+
+			<group DEF='right'>
 				<shape>
 					<appearance>
-						<script>
-							// Rendering to one half of the screen (full height)
-							// Interpupillary distance attribute below is distance between eyes, necessary for proper stereoscopic rendering
-							document.writeln('<renderedTexture class="ren-tex" dimensions="' + width + ' ' + height + ' 4" interpupillaryDistance="0.03" stereoMode="RIGHT_EYE" update="ALWAYS" repeatS="false" repeatT="false">');
-						</script>
-							<viewpoint USE="main-view" containerField="viewpoint"></viewpoint>  <!-- Using main camera viewpoint -->
-							<background USE="main-bgd" containerField="background"></background>  <!-- Using main scene background -->
-							<group USE="main-group" containerField="scene"></group>  <!-- Using all of same volumes present in main group -->
+						<renderedTexture interpupillaryDistance="0.03" id="rtRight" stereoMode="RIGHT_EYE" update='ALWAYS' dimensions='960 1080 4' repeatS='false' repeatT='false'>
+							<viewpoint USE='viewpoint' containerField='viewpoint'></viewpoint>
+							<background USE='bgnd' containerField='background'></background>
+							<group USE='scene' containerField="scene"></group>
 						</renderedTexture>
 						<composedShader>
-							<field name="tex" type="SFInt32" value="0"></field>
-							<field name="leftEye" type="SFFloat" value="0"></field>
-							
-							<!-- Vertex shader written in GLSL -->
-							<shaderPart type="VERTEX">
+							<field name='tex' type='SFInt32' value='0'></field>
+							<field name='leftEye' type='SFFloat' value='0'></field>
+							<shaderPart type='VERTEX'>
 								attribute vec3 position;
 								attribute vec2 texcoord;
-								
+
 								uniform mat4 modelViewProjectionMatrix;
 								varying vec2 fragTexCoord;
-								
+
 								void main()
 								{
-									vec2 pos = sign(position.xy);
-									fragTexCoord = texcoord;
-									gl_Position = vec4((pos.x + 1.0) / 2.0, pos.y, 0.0, 1.0); // Rendering to right half of screen
+								vec2 pos = sign(position.xy);
+								fragTexCoord = texcoord;
+								gl_Position = vec4((pos.x + 1.0)/2.0, pos.y, 0.0, 1.0);
 								}
 							</shaderPart>
-							
-							<!-- Using same fragment shader as left eye -->
-							<shaderPart USE="frag-shader" type="FRAGMENT"></shaderPart>
+							<shaderPart USE="frag" type='FRAGMENT'>
+							</shaderPart>
 						</composedShader>
 					</appearance>
-					<plane solid="false"></plane>  <!-- 2D object on right half of screen being rendered to -->
+					<plane solid="false"></plane>
 				</shape>
 			</group>
 		</scene>
 	</x3d>
-	
 </body>
+<script>
+	var previousAngles = {
+		'alpha': 0,
+		'beta': 0,
+		'gamma': 0
+	};
+	var vectors = {
+		'alpha': "0 1 0 ",
+		'beta': "1 0 0 ",
+		'gamma': "0 0 1 "
+	};
+	var deg2rad = Math.PI / 180;
+
+
+	if (window.DeviceOrientationEvent) {
+		window.addEventListener('deviceorientation', function(eventData) {
+			gamma = eventData.gamma;
+			beta = eventData.beta;
+			alpha = 360 - eventData.alpha;
+			rotate(alpha, 'alpha');
+			rotate(beta, 'beta');
+			rotate(gamma, 'gamma');
+		}, false);
+	} else {
+		alert('No Device Motion Sensor');
+	}
+
+	function rotate(angle, label) {
+		intAngle = Math.floor(angle + 0.5);
+		if (intAngle == previousAngles[label]) {
+			return;
+		}
+		previousAngles[label] = intAngle;
+		if (label == 'alpha') {
+			rotateView("x3d_viewpoint_" + label, vectors[label] + " " + intAngle * deg2rad);
+		}
+	}
+
+	function rotateView(label, vector) {
+		view = document.getElementById(label);
+		view.setAttribute('set_rotation', vector);
+	}
+</script>
+
 </html>
