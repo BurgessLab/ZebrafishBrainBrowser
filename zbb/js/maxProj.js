@@ -39,23 +39,23 @@ function toggleMaxProj(checked, id, val1, val2) {
 	if(checked) { // Projection enabled
 		var min = Math.min(val1, val2);
 		var max = Math.max(val1, val2);
-		
+
 		$.each(currRender, function(i, line) {
 			$('#' + line + '-proj-' + id).attr('minLine', min);
 			$('#' + line + '-proj-' + id).attr('maxLine', max);
 		});
-		
+
 		$('#proj-scene-' + id).attr('render', 'true');
-		
+
 		$('#proj-' + id + '-window').css('display', 'initial');
 		$('#' + id + '-window').css('display', 'none');
 	} else { // Projection disabled
 		$('#proj-scene-' + id).attr('render', 'false'); // Turning off rendering in projection window
-		
+
 		$('#' + id + '-window').css('display', 'initial'); // Showing slice window
 		$('#proj-' + id + '-window').css('display', 'none'); // Hiding projection window
 	}
-	
+
 	// Updating whether projections are currently on
 	if(id == 'x') {
 		xProjOn = checked;
@@ -64,12 +64,12 @@ function toggleMaxProj(checked, id, val1, val2) {
 	} else {
 		zProjOn = checked;
 	}
-	
+
 	// Applies color inversion to projection windows shortly after it's turned on
 	// This is done to ensure color inversion is set correctly when turning on projections
 	setTimeout(function() {
 		var colorInverted = $('#invert-input').prop('checked'); // Checks whether color is currently inverted
-		applyColorInversion(colorInverted); // Updates color inversion in projection windows
+		applyColorInversion(colorInverted, false); // Updates color inversion in projection windows
 	}, 100); // This function runs 100 milliseconds after being set
 }
 
@@ -85,36 +85,36 @@ function updateProjMarkers() {
 		var yH = $('#y-window').height() * window.devicePixelRatio;
 		var zW = $('#z-window').width() * window.devicePixelRatio;
 		var zH = $('#z-window').height() * window.devicePixelRatio;
-		
+
     // Adjust absolute coordinates for current zoom/pan frustum in each window (see zoom.js)
     var fovX = parseFloat($('#view-x').attr('fieldOfView'));
     var fovY = parseFloat($('#view-y').attr('fieldOfView'));
     var fovZ = parseFloat($('#view-z').attr('fieldOfView'));
-    
+
     var [xP1x, xP1y] = zoomTransform(xPointX1 * xW, (1 - xPointY1) * xH, fovX, camXPos[0], camXPos[1], X_CAM_DIST, xW, xH, Y_SIZE, Z_SIZE, -1);
     var [yP1x, yP1y] = zoomTransform(yPointX1 * yW, (1 - yPointY1) * yH, fovY, camYPos[0], camYPos[1], Y_CAM_DIST, yW, yH, X_SIZE, Z_SIZE, -1);
     var [zP1x, zP1y] = zoomTransform(zPointX1 * zW, (1 - zPointY1) * zH, fovZ, camZPos[0], camZPos[1], Z_CAM_DIST, zW, zH, X_SIZE, Y_SIZE, -1);
-    
+
     var [xP2x, xP2y] = zoomTransform(xPointX2 * xW, (1 - xPointY2) * xH, fovX, camXPos[0], camXPos[1], X_CAM_DIST, xW, xH, Y_SIZE, Z_SIZE, -1);
     var [yP2x, yP2y] = zoomTransform(yPointX2 * yW, (1 - yPointY2) * yH, fovY, camYPos[0], camYPos[1], Y_CAM_DIST, yW, yH, X_SIZE, Z_SIZE, -1);
     var [zP2x, zP2y] = zoomTransform(zPointX2 * zW, (1 - zPointY2) * zH, fovZ, camZPos[0], camZPos[1], Z_CAM_DIST, zW, zH, X_SIZE, Y_SIZE, -1);
-    
+
 		// Updating first marker location in slicer windows
 		// not(.proj-x) indicates this value should not be changed in the projection windows
 		$('.' + val + '-volume-x:not(.proj-x)').attr('markerLoc1', xP1x + ' ' + xP1y + ' 0.0');
 		$('.' + val + '-volume-y:not(.proj-y)').attr('markerLoc1', yP1x + ' ' + yP1y + ' 0.0');
 		$('.' + val + '-volume-z:not(.proj-z)').attr('markerLoc1', zP1x + ' ' + zP1y + ' 0.0');
-		
+
 		// Updating second marker location
 		$('.' + val + '-volume-x:not(.proj-x)').attr('markerLoc2', xP2x + ' ' + xP2y + ' 0.0');
 		$('.' + val + '-volume-y:not(.proj-y)').attr('markerLoc2', yP2x + ' ' + yP2y + ' 0.0');
 		$('.' + val + '-volume-z:not(.proj-z)').attr('markerLoc2', zP2x + ' ' + zP2y + ' 0.0');
-		
+
 		// Updating whether first marker should be rendered (i.e. first partial projection selection is made)
 		$('.' + val + '-volume-x:not(.proj-x)').attr('renderMarker1', xProjMarked1 ? 1.0 : 0.0);
 		$('.' + val + '-volume-y:not(.proj-y)').attr('renderMarker1', yProjMarked1 ? 1.0 : 0.0);
 		$('.' + val + '-volume-z:not(.proj-z)').attr('renderMarker1', zProjMarked1 ? 1.0 : 0.0);
-		
+
 		// Updating whether second marker should be rendered (i.e. second partial projection selection is made)
 		$('.' + val + '-volume-x:not(.proj-x)').attr('renderMarker2', xProjMarked2 ? 1.0 : 0.0);
 		$('.' + val + '-volume-y:not(.proj-y)').attr('renderMarker2', yProjMarked2 ? 1.0 : 0.0);
@@ -155,120 +155,120 @@ function setPartialProj(id, evt) {
 	} else {
 		isMarked = zProjMarked1 && !zProjMarked2;
 	}
-	
+
 	if(isMarked) { // First line being marked
 		// Getting location of click
 		var bbox = evt.target.getBoundingClientRect();
-		
+
 		var pX = parseInt(evt.clientX - bbox.left);
 		var pY = parseInt(evt.clientY - bbox.top);
 		var boxW = parseInt(bbox.right - bbox.left);
 		var boxH = parseInt(bbox.bottom - bbox.top);
-		
+
 		// Normalizing location of click to 0-1
 		var posX = pX / boxW;
 		var posY = pY / boxH;
-    
+
 		// Checking which window was clicked
 		if(id == 'x') {
       // Transform from view frustum coordinates to absolute normalized coordinates (see zoom.js)
       var fovX = parseFloat($('#view-x').attr('fieldOfView'));
       [posX, posY] = zoomInverseTransform(posX, posY, fovX, camXPos[0], camXPos[1], X_CAM_DIST, Y_SIZE, Z_SIZE, -1, 1);
-      
+
       // Getting range of selection in y and z windows
 			var y1 = 1 - posX;
 			var y2 = 1 - xPointX1;
-			
+
 			var z1 = posY;
 			var z2 = xPointY1;
-			
+
 			// Saving second click location and indicating second selection has been made
 			xPointX2 = posX;
 			xPointY2 = posY;
 			xProjMarked2 = true;
-			
+
 			// Toggling projection in y and z windows based on selected area
 			toggleMaxProj(true, 'y', Math.min(y1, y2), Math.max(y1, y2));
 			toggleMaxProj(true, 'z', Math.min(z1, z2), Math.max(z1, z2));
 		} else if(id == 'y') { // See similar comments above
       var fovY = parseFloat($('#view-y').attr('fieldOfView'));
       [posX, posY] = zoomInverseTransform(posX, posY, fovY, camYPos[0], camYPos[1], Y_CAM_DIST, X_SIZE, Z_SIZE, -1, 1);
-      
+
 			var x1 = posX;
 			var x2 = yPointX1;
-			
+
 			var z1 = posY;
 			var z2 = yPointY1;
-			
+
 			yPointX2 = posX;
 			yPointY2 = posY;
 			yProjMarked2 = true;
-			
+
 			toggleMaxProj(true, 'x', Math.min(x1, x2), Math.max(x1, x2));
 			toggleMaxProj(true, 'z', Math.min(z1, z2), Math.max(z1, z2));
 		} else { // See similar comments above
       var fovZ = parseFloat($('#view-z').attr('fieldOfView'));
       [posX, posY] = zoomInverseTransform(posX, posY, fovZ, camZPos[0], camZPos[1], Z_CAM_DIST, X_SIZE, Y_SIZE, -1, 1);
-      
+
 			var x1 = posX;
 			var x2 = zPointX1;
-			
+
 			var y1 = 1 - posY;
 			var y2 = 1 - zPointY1;
-			
+
 			zPointX2 = posX;
 			zPointY2 = posY;
 			zProjMarked2 = true;
-			
+
 			toggleMaxProj(true, 'x', Math.min(x1, x2), Math.max(x1, x2));
 			toggleMaxProj(true, 'y', Math.min(y1, y2), Math.max(y1, y2));
 		}
-		
+
 		updateProjMarkers(); // Updating brown projection markers in slicer windows
 	} else { // Second line being marked
 		var bbox = evt.target.getBoundingClientRect();
-		
+
 		// Calculating x and y position of click
 		var pX = parseInt(evt.clientX - bbox.left);
 		var pY = parseInt(evt.clientY - bbox.top);
 		var boxW = parseInt(bbox.right - bbox.left);
 		var boxH = parseInt(bbox.bottom - bbox.top);
-		
+
 		// Normalizing click location to 0-1
 		var posX = pX / boxW;
 		var posY = pY / boxH;
-		
+
 		// Saving click location for relevant window
 		if(id == 'x') {
       // Transform from view frustum coordinates to absolute normalized coordinates (see zoom.js)
       var fovX = parseFloat($('#view-x').attr('fieldOfView'));
       [posX, posY] = zoomInverseTransform(posX, posY, fovX, camXPos[0], camXPos[1], X_CAM_DIST, Y_SIZE, Z_SIZE, -1, 1);
-      
+
 			xPointX1 = posX;
 			xPointY1 = posY;
 		} else if(id == 'y') {
       var fovY = parseFloat($('#view-y').attr('fieldOfView'));
       [posX, posY] = zoomInverseTransform(posX, posY, fovY, camYPos[0], camYPos[1], Y_CAM_DIST, X_SIZE, Z_SIZE, -1, 1);
-      
+
 			yPointX1 = posX;
 			yPointY1 = posY;
 		} else {
       var fovZ = parseFloat($('#view-z').attr('fieldOfView'));
       [posX, posY] = zoomInverseTransform(posX, posY, fovZ, camZPos[0], camZPos[1], Z_CAM_DIST, X_SIZE, Y_SIZE, -1, 1);
-      
+
 			zPointX1 = posX;
 			zPointY1 = posY;
 		}
-		
+
 		// Saving that first marked has been selected but not second
 		xProjMarked1 = true;
 		yProjMarked1 = true;
 		zProjMarked1 = true;
-		
+
 		xProjMarked2 = false;
 		yProjMarked2 = false;
 		zProjMarked2 = false;
-		
+
 		// Updating brown projection markers in slice windows
 		updateProjMarkers();
 	}

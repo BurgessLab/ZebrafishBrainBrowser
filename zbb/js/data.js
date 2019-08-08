@@ -1,7 +1,7 @@
 /*
  * This file contains all data used to generate lines, including line information, default settings, and publication/scan information
  * This data is also used when performing text searches, see textSearch.js
- * 
+ *
  * WARNING: editing the data in this file will also require regenerating the spatial search binaries, otherwise the spatial search feature will not work properly, see spatialSearch.js and corresponding Python scripts for details
  */
 
@@ -11,7 +11,7 @@
 const HUC_CER = ['huc-cer'];
 const HUC_CER_NAME = ['HuC-Cer'];
 const HUC_CER_BRIGHTNESS = [0.0];
-const HUC_CER_CONTRAST = [0.4];
+const HUC_CER_CONTRAST = [0.6];
 const HUC_CER_THRESHOLD = [0.15686];
 const HUC_CER_PUBLISHED = ['Marquart Fr Neural Circuits (2015)'];
 const HUC_CER_PUBMED = ['26635538'];

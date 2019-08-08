@@ -10,26 +10,26 @@ var activeAnatomy = 'z-brain'; // Saves active anatomy type, either z-brain or p
 function setActiveAnatomy(type, btnID) {
 	if(type != activeAnatomy) { // Checking to make sure selected anatomy is not already active
 		$('.anatomy-1-selectable-data, .anatomy-2-selectable-data').attr('render', 'false'); // Turns off rendering of all selectable anatomy regions (shift-click regions)
-		
+
 		// Checks if selectable pajevic anatomy is currently being rendered, removes it if so
 		var index1 = currRender.indexOf('anatomy-1-selectable');
 		if(index1 > -1) {
 			currRender.splice(index1, 1);
 		}
-		
+
 		// Checks if selectable z-brain anatomy is currently being rendered, removes it if so
 		var index2 = currRender.indexOf('anatomy-2-selectable');
 		if(index2 > -1) {
 			currRender.splice(index2, 1);
 		}
-		
+
 		// Turns off full anatomy for both types
 		toggleFullAnatomy('z-brain', 'show-full-btn', false);
 		toggleFullAnatomy('pajevic', 'show-full-btn', false);
 	}
-	
+
 	activeAnatomy = type; // Storing active anatomy type
-	
+
 	// Setting inset for active anatomy button
 	$('.active-anatomy-btn').removeClass('active'); // "active" is a Bootstrap class used to give buttons an inset effect
 	$('#' + btnID).addClass('active');
@@ -56,7 +56,7 @@ function swapView(id, button) {
 	// Insetting button of currently selected menu
 	$('.nav-btn, .nav-btn-2').removeClass('active');
 	$(button).addClass('active');
-	
+
 	// Hiding any currently open menus then showing selected menu
 	$('.right-div').addClass('hidden');
 	$('#' + id).removeClass('hidden');
@@ -72,6 +72,7 @@ function changeButtonInset(layout) {
 // Will show/hide and individual line's settings in the draggable individual settings panel
 function showSettings(checked, id) {
 	$('#' + id + '-settings').css('display', (checked ? 'block' : 'none'));
+	$('#' + id + '-color-key').css('display', (checked ? 'block' : 'none')); //ADDED CODE BY ISAAC
 }
 
 // Adjusts the height of the right panel so the bottom remains flush with the bottom of the left panel
@@ -80,7 +81,7 @@ function adjustRightDiv() {
 	// Calculating and settings menu height (height of left panel minus height of navigation buttons)
 	var numPixels = $('#left-panel-container').height() - $('#nav-btn-row-1').outerHeight() - $('#nav-btn-row-2').outerHeight();
 	$('#right-div-container').innerHeight(numPixels + 'px');
-	
+
 	// Calculating height of lists in Lines menu, as not to create multiple unnecessary scroll bars
 	// Setting list pane height to total menu height minus navigation tabs height
 	var listHeight = $('#right-div-regions').height() - $('#line-selection-header').outerHeight(true) - $('#transgenic-selection-tab').outerHeight();
@@ -94,11 +95,11 @@ function changeWindowSize(btnID, size) {
 	$('#left-panel-container').css('width', size + '%');
 	$('#right-panel').css('width', (100 - size) + '%'); // Percentage width of right panel will always be 100 - percentage width of left panel
 	updateLines(); // Updating blue crosshair line locations
-	
+
 	// Changing inset for active window height button
 	$('.win-button').removeClass('active');
 	$('#' + btnID).addClass('active');
-	
+
 	updateSSVolumeAttribs(); // Updating spatial search highlight box when applicable
 	adjustRightDiv(); // Updates right panel height
 }
@@ -127,7 +128,7 @@ function buildInfoWindow(id) {
 	var anatomy;
 	var scanned;
 	var smed;
-	
+
 	// Finding line's information based on id and type
 	if(includes(TRANSGENIC, id)) {
 		var index = TRANSGENIC.indexOf(id);
@@ -179,14 +180,14 @@ function buildInfoWindow(id) {
 		scanned = HUC_CER_SCANNED[0];
 		smed = HUC_CER_SPUBMED[0];
 	}
-	
+
 	// Constructing HTML for info window
 	// Styles are also provided in style tags because this window doesn't link to any stylesheets
 	var infoText = 	'<title>' +
 						(name == '' ? id : name) + ' Info' +
 					'</title>' +
 					'<style>' +
-					'body {' + 
+					'body {' +
 						'margin: 0;' +
 						'overflow-y: hidden;' +
 					'}' +
@@ -228,7 +229,7 @@ function buildInfoWindow(id) {
 						'<p class="header-p">Scanned By:</p>' +
 						'<p class="text-p">' + (smed == '' ? '' : '<a class="zfin-link" href="https://www.ncbi.nlm.nih.gov/pubmed/' + smed + '" target="_blank">') + scanned + (smed == '' ? '' : '</a>') + '</p>' +
 					'</div>';
-	
+
 	// Opening info window
 	var infoWindow = window.open('', id + '-window-' + windowCounter++, 'width=500px,height=500px'); // windowCounter is used and incremented to make sure every window opened is unique
 	infoWindow.document.write(infoText); // Writing constructed HTML to window
@@ -239,7 +240,7 @@ function buildInfoWindow(id) {
 // Changes made to this function should be updated to the HuC-Cer volumes in index.html as well
 function appendVolumes(id) {
 	var type;
-	
+
 	// Finding line's type based on ID, used for image URL
 	if(includes(TRANSGENIC, id)) {
 		type = 'transgenic';
@@ -250,7 +251,7 @@ function appendVolumes(id) {
 	} else {
 		type = 'misc';
 	}
-	
+
 	// Constructing HTML for each volume (x, y, z, 3D)
 	// These volumes use the X3DOM libraries https://doc.x3dom.org/author/index.html
 	var xText = '<VolumeData class="' + id + '-data" dimensions="1 0.598058 0.407767" render="false">' +
@@ -275,7 +276,7 @@ function appendVolumes(id) {
 					'<ImageTextureAtlas class="' + id + '-atlas" containerField="voxels" url="res/lineImages/' + type + '/' + id + '/' + id + '_2560.png" numberOfSlices="100" slicesOverX="10" slicesOverY="10"></ImageTextureAtlas>' +
 					'<BoundaryEnhancementVolumeStyle class="' + id + '-volume-full volume-full"></BoundaryEnhancementVolumeStyle>' +
 				'</VolumeData>';
-	
+
 	// Appending volumes to page
 	$('.volume-x-container').append(xText);
 	$('.volume-y-container').append(yText);
@@ -288,7 +289,7 @@ function appendVolumes(id) {
 // Changes made to this function should be updated to the HuC-Cer volumes in index.html as well
 function appendProjections(id) {
 	var type;
-	
+
 	// Finding line's type based on id
 	if(includes(TRANSGENIC, id)) {
 		type = 'transgenic';
@@ -299,10 +300,10 @@ function appendProjections(id) {
 	} else {
 		type = 'misc';
 	}
-	
+
 	// Checking whether depth coding is currently enabled
 	var depthCodingText = $('#depth-code-projections-checkbox').prop('checked') ? 'depthCoded="1.0"' : '';
-	
+
 	// Constructing HTML for projection volumes, setting depth coding based on whether it's currently active
 	var xText = 	'<VolumeData class="' + id + '-data" dimensions="1 0.598058 0.407767" render="false">' +
 						'<ImageTextureAtlas class="' + id + '-atlas" containerField="voxels" url="res/lineImages/' + type + '/' + id + '/' + id + '_2560.png" numberOfSlices="100" slicesOverX="10" slicesOverY="10"></ImageTextureAtlas>' +
@@ -316,7 +317,7 @@ function appendProjections(id) {
 						'<ImageTextureAtlas class="' + id + '-atlas" containerField="voxels" url="res/lineImages/' + type + '/' + id + '/' + id + '_2560.png" numberOfSlices="100" slicesOverX="10" slicesOverY="10"></ImageTextureAtlas>' +
 						'<MPRVolumeStyle id="' + id + '-proj-z" class="' + id + '-volume-z volume-z proj-z" ' + depthCodingText + ' isProjection="1.0" projectionDir="2.0" renderLines="0.0" originLine="0 0 1" finalLine = "0 0 -1" positionLine="0.25" lineColor="0 1 1"></MPRVolumeStyle>' +
 					'</VolumeData>';
-	
+
 	// Appending volumes to page
 	$('.proj-x-container').append(xText);
 	$('.proj-y-container').append(yText);
@@ -328,7 +329,7 @@ function appendProjections(id) {
 // Changes made to this function should be updated to the HuC-Cer settings panel in index.html as well
 function appendSettings(id, toggleIndex) {
 	var name;
-	
+
 	// Getting name of line based on its id (needed for proper capitalization)
 	if(includes(TRANSGENIC, id)) {
 		var index = TRANSGENIC.indexOf(id);
@@ -343,7 +344,7 @@ function appendSettings(id, toggleIndex) {
 		var index = MISC.indexOf(id);
 		name = MISC_NAMES[index];
 	}
-	
+
 	// Creating settings panel for line
 	var settingsText = 	'<div id="' + id + '-settings" class="individual-settings">' +
 							// Color picker button
@@ -360,7 +361,7 @@ function appendSettings(id, toggleIndex) {
 							// Visibility button
 							(toggleIndex > -1 ? '<button id="' + id + '-toggle-btn" class="btn btn-xs btn-default individual-settings-toggle" type="button" onclick="toggleSelection(' + toggleIndex + ')"></button>' : '') +
 							// Toggle button label (where applicable)
-							'<p class="toggle-num">' + (toggleIndex > -1 ? toggleIndex + 1 : '') + '</p>' +
+							'<p id="' + id + '-toggle-num" class="toggle-num"></p>'+
 							// Contrast inputs (Note: the volume attribute for contrast is called "renderIntensity", a name that was chosen before deciding on Contrast)
 							'<div class="input-block container-fluid no-padding">' +
 								'<div class="row settings-row margin-0">' +
@@ -396,7 +397,21 @@ function appendSettings(id, toggleIndex) {
 								'</div>' +
 							'</div>' +
 						'</div>';
-	
+
 	// Appending line settings to page
 	$('.individual-settings-container').append(settingsText);
+
+	//Appending color key to page
+	var colorKey = '<p id="' + id + '-color-key" class="individual-color-key">' + (name == '' ? id : name) + '</p>';
+	$('.color-keys').append(colorKey);
+}
+
+//Open help document
+function openHelp(section) {
+	window.open('help.html#'+section);
+}
+
+//Toggle help buttons on when checked
+function toggleHelp(checked) {
+	$('.help-btn').css('display', (checked ? 'block' : 'none'));
 }

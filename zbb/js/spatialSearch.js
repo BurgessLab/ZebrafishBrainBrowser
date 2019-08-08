@@ -66,11 +66,6 @@ var sszp2y = -1;
 
 // Turns on/off highlighting of selected spatial search region
 function toggleSSHighlighting(enabled) {
-  if(!enabled) {
-    // Tell users that zooming has been re-enabled
-    $('#ss-zoom-disabled').css('display', 'none');
-  }
-  
 	ssHighlighted = enabled;
 	updateSSVolumeAttribs(); // Updates values like search box location and size in slice windows
 }
@@ -82,124 +77,124 @@ function ssHighlightUpdate() {
 		if(spatialSearchOn) { // Only does anything is spatial search is currently being conducted
 			if(firstAreaXPressed) { // First area being selected in x window
 				var panelOffset = ($('#left-panel-container').width() - $('#left-panel').width()) / 2; // Getting margin between left edge of screen and left side of x window in pixels
-				
+
 				var xX = $('#x-window').position().left; // X location of x window (from left)
 				var xY = $('#x-window').position().top; // Y location of y window (from top)
 				var xW = $('#x-window').width(); // Width of x window
 				var xH = $('#x-window').height(); // Height of x window
-				
+
 				var relX = 1 - (mouseX - panelOffset - xX) / xW; // Calculating x location of mouse inside X window (0 being left side of window, 1 being right side)
 				var relY = (mouseY - panelOffset - xY) / xH; // Calculating y location of mouse inside Y window (0 being top of window, 1 being bottom)
-				
+
 				yMax = relX; // X location of mouse in x window represents volume's y depth
 				zMax = relY; // Y location of mouse in x window represents volume's z depth
 			} else if(firstAreaYPressed) { // See similar comments above
 				var panelOffset = ($('#left-panel-container').width() - $('#left-panel').width()) / 2;
-				
+
 				var yX = $('#y-window').position().left;
 				var yY = $('#y-window').position().top;
 				var yW = $('#y-window').width();
 				var yH = $('#y-window').height();
-				
+
 				var relX = (mouseX - panelOffset - yX) / yW;
 				var relY = (mouseY - panelOffset - yY) / yH;
-				
+
 				xMax = relX; // X location of mouse in y window is x depth on whole volume
 				zMax = relY; // Y location of mouse in y window is z depth on whole volume
 			} else if(firstAreaZPressed) { // See similar comments above
 				var panelOffset = ($('#left-panel-container').width() - $('#left-panel').width()) / 2;
-				
+
 				var zX = $('#z-window').position().left;
 				var zY = $('#z-window').position().top;
 				var zW = $('#z-window').width();
 				var zH = $('#z-window').height();
-				
+
 				var relX = (mouseX - panelOffset - zX) / zW;
 				var relY = 1 - (mouseY - panelOffset - zY) / zH;
-				
+
 				xMax = relX; // X location of mouse in z window is x depth on whole volume
 				yMax = relY; // Y location of mouse in z window is y depth on whole volume
 			}
-			
+
 			// Second area being selected in another window
 			// See comments above for how mouse location calculations work
 			if(secondAreaXPressed) { // Second area being selected in x window
 				if(firstAreaSelected == 'y') { // First area was selected in y window
 					var panelOffset = ($('#left-panel-container').width() - $('#left-panel').width()) / 2;
-					
+
 					var xX = $('#x-window').position().left;
 					var xW = $('#x-window').width();
-					
+
 					var relX = 1 - (mouseX - panelOffset - xX) / xW;
 					yMax = relX;
 				} else if(firstAreaSelected == 'z') { // First area was selected in z window
 					var panelOffset = ($('#left-panel-container').width() - $('#left-panel').width()) / 2;
-					
+
 					var xY = $('#x-window').position().top;
 					var xH = $('#x-window').height();
-					
+
 					var relY = (mouseY - panelOffset - xY) / xH;
 					zMax = relY;
 				}
 			} else if(secondAreaYPressed) { // Second area being selected in y window
 				if(firstAreaSelected == 'x') { // First area was selected in x window
 					var panelOffset = ($('#left-panel-container').width() - $('#left-panel').width()) / 2;
-					
+
 					var yX = $('#y-window').position().left;
 					var yW = $('#y-window').width();
-					
+
 					var relX = (mouseX - panelOffset - yX) / yW;
 					xMax = relX;
 				} else if(firstAreaSelected == 'z') { // First area was selected in z window
 					var panelOffset = ($('#left-panel-container').width() - $('#left-panel').width()) / 2;
-					
+
 					var yY = $('#y-window').position().top;
 					var yH = $('#y-window').height();
-					
+
 					var relY = (mouseY - panelOffset - yY) / yH;
 					zMax = relY;
 				}
 			} else if(secondAreaZPressed) { // Second area being selected in z window
 				if(firstAreaSelected == 'x') { // First area was selected in x window
 					var panelOffset = ($('#left-panel-container').width() - $('#left-panel').width()) / 2;
-					
+
 					var zX = $('#z-window').position().left;
 					var zW = $('#z-window').width();
-					
+
 					var relX = (mouseX - panelOffset - zX) / zW;
 					xMax = relX;
 				} else if(firstAreaSelected == 'y') { // First area was selected in y window
 					var panelOffset = ($('#left-panel-container').width() - $('#left-panel').width()) / 2;
-					
+
 					var zY = $('#z-window').position().top;
 					var zH = $('#z-window').height();
-					
+
 					var relY = 1 - (mouseY - panelOffset - zY) / zH;
 					yMax = relY;
 				}
 			}
-			
+
 			// Updating values used to calculate minimum/maximum coordinate locations of highlighted yellow selection box
 			// These values range from 0 to 1, 0 being the top/left sides of the window, 1 being the bottom/right sides
-			
+
 			// Location of highlight box in x window
 			ssxp1x = 1 - yMin;
 			ssxp1y = 1 - zMin;
 			ssxp2x = 1 - yMax;
 			ssxp2y = 1 - zMax;
-			
+
 			// Location of highlight box in y window
 			ssyp1x = xMin;
 			ssyp1y = 1 - zMin;
 			ssyp2x = xMax;
 			ssyp2y = 1 - zMax;
-			
+
 			// Location of highlight box in z window
 			sszp1x = xMin;
 			sszp1y = yMin;
 			sszp2x = xMax;
 			sszp2y = yMax;
-			
+
 			updateSSVolumeAttribs(); // Updates the slicer volume attributes using these newly calculated coordinate values
 			ssHighlightUpdate(); // Calls this function again for recursive effect, allowing highlighted box location to be updating while user is making selection
 		}
@@ -209,16 +204,16 @@ function ssHighlightUpdate() {
 // Updates location values of highlighted yellow region in slicer windows
 function updateSSVolumeAttribs() {
 	$('.volume-x, .volume-y, .volume-z').attr('ssHighlighted', ssHighlighted ? 1.0 : 0.0); // Turns on/off highlighting
-	
+
 	if(ssHighlighted) {
 		var xWidth = $('#x-window').width() * window.devicePixelRatio;
 		var xHeight = $('#x-window').height() * window.devicePixelRatio;
 		$('.volume-x').attr('ssp1x', ssxp1x * xWidth).attr('ssp2x', ssxp2x * xWidth).attr('ssp1y', ssxp1y * xHeight).attr('ssp2y', ssxp2y * xHeight); // Setting X window min and max coordinates
-		
+
 		var yWidth = $('#y-window').width() * window.devicePixelRatio;
 		var yHeight = $('#y-window').height() * window.devicePixelRatio;
 		$('.volume-y').attr('ssp1x', ssyp1x * yWidth).attr('ssp2x', ssyp2x * yWidth).attr('ssp1y', ssyp1y * yHeight).attr('ssp2y', ssyp2y * yHeight); // Setting Y window min and max coordinates
-		
+
 		var zWidth = $('#z-window').width() * window.devicePixelRatio;
 		var zHeight = $('#z-window').height() * window.devicePixelRatio;
 		$('.volume-z').attr('ssp1x', sszp1x * zWidth).attr('ssp2x', sszp2x * zWidth).attr('ssp1y', sszp1y * zHeight).attr('ssp2y', sszp2y * zHeight); // Setting Z window min and max coordinates
@@ -236,21 +231,19 @@ function showSearch() {
 // Begins spatial search routine after pressing 'Start' button
 function startSearch() {
   toggleSSHighlighting(false);
-	
-  // Warn users that zooming is temporarily disabled
-  $('#ss-zoom-disabled').css('display', 'block');
-  
+  $('#ss-reset-btn').css('display', 'none');
+
 	if(!window.Worker) {
 		$('#ss-message').text('Your browser does not support Web Workers, so a spatial search cannot be performed. Please update your browser and try again.');
 		$('#ss-message').css('display', 'block');
 		console.warn('Your browser does not support Web Workers, so a spatial search cannot be performed. Please update your browser and try again.');
 		return;
 	}
-	
+
 	clearProjX();
 	clearProjY();
 	clearProjZ();
-	
+
 	if(xFull) {
 		toggleFullscreen('x');
 	}
@@ -263,7 +256,7 @@ function startSearch() {
 	if(vFull) {
 		toggleFullscreen('full');
 	}
-	
+
 	if(xProjOn) {
 		toggleMaxProj(false, 'x', 0, 1);
 	}
@@ -273,12 +266,12 @@ function startSearch() {
 	if(zProjOn) {
 		toggleMaxProj(false, 'z', 0, 1);
 	}
-	
+
 	$('.full-btn').prop('disabled', true);
 	$('.mp-btn').prop('disabled', true);
-	
+
 	spatialSearchOn = true;
-	$('#ss-message').text('Spatial search started. Select first area.');
+	$('#ss-message').text('-click and drag in any view to select an area\n-note: zooming is disabled');
 	$('#ss-start-btn').css('display', 'none');
 	$('#ss-message').css('display', 'block');
 }
@@ -286,10 +279,10 @@ function startSearch() {
 // Gets X position of mouse inside specified event target (one of the slicer windows), normalized from 0-1
 function getPosX(evt) {
 	var bbox = evt.target.getBoundingClientRect(); // Gets bounding box of window
-	
+
 	var pX = parseInt(evt.clientX - bbox.left); // X location of mouse in pixels
 	var boxW = parseInt(bbox.right - bbox.left); // Width of window in pixels
-	
+
 	var posX = pX / boxW; // Normalized X position (0-1)
 	return posX;
 }
@@ -297,10 +290,10 @@ function getPosX(evt) {
 // Gets Y position of mouse inside specified event target (one of the slicer windows), normalized from 0-1
 function getPosY(evt) {
 	var bbox = evt.target.getBoundingClientRect(); // Gets bounding box of window
-	
+
 	var pY = parseInt(evt.clientY - bbox.top); // Y location of mouse in pixels
 	var boxH = parseInt(bbox.bottom - bbox.top); // Height of window in pixels
-	
+
 	var posY = pY / boxH; // Normalized Y position (0-1)
 	return posY;
 }
@@ -309,12 +302,12 @@ function getPosY(evt) {
 function firstAreaPressed(id, evt) {
 	toggleSSHighlighting(true); // Turns on yellow highlight box in slicer windows
 	ssHighlightUpdate(); // Starts update loop of yellow box position
-	
+
 	// Determining which window is selected
 	firstAreaXPressed = id == 'x';
 	firstAreaYPressed = id == 'y';
 	firstAreaZPressed = id == 'z';
-	
+
 	// Getting 3D location of click
 	// Uses slicer input values (.val()) for axis of window that's clicked
 	if(id == 'x') {
@@ -330,12 +323,12 @@ function firstAreaPressed(id, evt) {
 		yMin = 1 - getPosY(evt); // Using 1 minus to measure yMin from right side of window instead of left
 		zMin = $('#z-input').val();
 	}
-	
+
 	// Setting max and min values to be same so highlighted region starts out with 0 area
 	xMax = xMin;
 	yMax = yMin;
 	zMax = zMin;
-	
+
 	// Updates slicer volume attributes (highlighted box display)
 	updateSSVolumeAttribs();
 }
@@ -346,67 +339,67 @@ function firstAreaReleased(id, evt) {
 	firstAreaXPressed = false;
 	firstAreaYPressed = false;
 	firstAreaZPressed = false;
-	
+
 	// Settings values based on which window selection was made in
 	if(id == 'x') {
 		// Saving first point that was selected on user's click
 		var lastX = xMin;
 		var lastY = yMin;
 		var lastZ = zMin;
-		
+
 		// Getting location of mouse when released, capturing second selection point
 		var thisX = $('#x-input').val();
 		var thisY = 1 - getPosX(evt); // Using 1 minus to measure thisY from right side of window instead of left
 		var thisZ = getPosY(evt);
-		
+
 		// Finding maximum and minimum values of the two selected points
 		// xMin and xMax will be the same because the selection was made in the X window (same x slice used), the x range of the search region will be determined when the user selects the second area
 		xMin = Math.min(lastX, thisX);
 		xMax = Math.max(lastX, thisX);
-		
+
 		yMin = Math.min(lastY, thisY);
 		yMax = Math.max(lastY, thisY);
-		
+
 		zMin = Math.min(lastZ, thisZ);
 		zMax = Math.max(lastZ, thisZ);
 	} else if(id == 'y') { // See similar comments above
 		var lastX = xMin;
 		var lastY = yMin;
 		var lastZ = zMin;
-		
+
 		var thisX = getPosX(evt);
 		var thisY = $('#y-input').val();
 		var thisZ = getPosY(evt);
-		
+
 		xMin = Math.min(lastX, thisX);
 		xMax = Math.max(lastX, thisX);
-		
+
 		yMin = Math.min(lastY, thisY);
 		yMax = Math.max(lastY, thisY);
-		
+
 		zMin = Math.min(lastZ, thisZ);
 		zMax = Math.max(lastZ, thisZ);
 	} else if(id == 'z') { // See similar comments above
 		var lastX = xMin;
 		var lastY = yMin;
 		var lastZ = zMin;
-		
+
 		var thisX = getPosX(evt);
 		var thisY = 1 - getPosY(evt);
 		var thisZ = $('#z-input').val();
-		
+
 		xMin = Math.min(lastX, thisX);
 		xMax = Math.max(lastX, thisX);
-		
+
 		yMin = Math.min(lastY, thisY);
 		yMax = Math.max(lastY, thisY);
-		
+
 		zMin = Math.min(lastZ, thisZ);
 		zMax = Math.max(lastZ, thisZ);
 	}
-	
+
 	firstAreaSelected = id; // Indicating which window the first selection was made in, this is to prevent user from making second selection in the same window
-	$('#ss-message').text('First area selected. Select second area.'); // Telling user next steps
+	$('#ss-message').text('-first area selected (yellow box)\n-click and drag in a second view to complete volume'); // Telling user next steps
 }
 
 // Function called when user clicks to select second region (bound in ready.js)
@@ -416,7 +409,7 @@ function secondAreaPressed(id, evt) {
 	secondAreaXPressed = id == 'x';
 	secondAreaYPressed = id == 'y';
 	secondAreaZPressed = id == 'z';
-	
+
 	// Checking which window was selected, setting location of click accordingly, similar to logic when clicking to select first region
 	// Note however that only one axis will be affected when selecting the second region, as the first two dimensions were determined when selecting the first area
 	if(id == 'x') {
@@ -452,22 +445,22 @@ function secondAreaReleased(id, evt) {
 	secondAreaXPressed = false;
 	secondAreaYPressed = false;
 	secondAreaZPressed = false;
-	
+
 	$('#ss-message').text('Loading results...'); // Informing user search calculation has begun
-	
+
 	// Getting location of where mouse was located on release, finalizing bounds of search region
 	// This logic is similar to firstAreaReleased(), but note that only one dimension is affected here based on which window the second selection was made in
 	if(id == 'x') {
 		if(firstAreaSelected == 'y') {
 			var lastY = yMin;
 			var thisY = 1 - getPosX(evt);
-			
+
 			yMin = Math.min(lastY, thisY);
 			yMax = Math.max(lastY, thisY);
 		} else if(firstAreaSelected == 'z') {
 			var lastZ = zMin;
 			var thisZ = getPosY(evt);
-			
+
 			zMin = Math.min(lastZ, thisZ);
 			zMax = Math.max(lastZ, thisZ);
 		}
@@ -475,13 +468,13 @@ function secondAreaReleased(id, evt) {
 		if(firstAreaSelected == 'x') {
 			var lastX = xMin;
 			var thisX = getPosX(evt);
-			
+
 			xMin = Math.min(lastX, thisX);
 			xMax = Math.max(lastX, thisX);
 		} else if(firstAreaSelected == 'z') {
 			var lastZ = zMin;
 			var thisZ = getPosY(evt);
-			
+
 			zMin = Math.min(lastZ, thisZ);
 			zMax = Math.max(lastZ, thisZ);
 		}
@@ -489,18 +482,18 @@ function secondAreaReleased(id, evt) {
 		if(firstAreaSelected == 'x') {
 			var lastX = xMin;
 			var thisX = getPosX(evt);
-			
+
 			xMin = Math.min(lastX, thisX);
 			xMax = Math.max(lastX, thisX);
 		} else if(firstAreaSelected == 'y') {
 			var lastY = yMin;
 			var thisY = 1 - getPosY(evt);
-			
+
 			yMin = Math.min(lastY, thisY);
 			yMax = Math.max(lastY, thisY);
 		}
 	}
-	
+
 	doSearch(); // Starting search calculations
 }
 
@@ -513,7 +506,7 @@ function doSearch() {
 	var maxH = parseInt(yMax * STACK_HEIGHT);
 	var minD = parseInt(zMin * STACK_DEPTH);
 	var maxD = parseInt(zMax * STACK_DEPTH);
-	
+
 	// Finding index range of fragments needed to be searched
 	var startFragW = parseInt(minW / FRAG_SIZE);
 	var endFragW = parseInt(maxW / FRAG_SIZE);
@@ -521,62 +514,62 @@ function doSearch() {
 	var endFragH = parseInt(maxH / FRAG_SIZE);
 	var startFragD = parseInt(minD / FRAG_SIZE);
 	var endFragD = parseInt(maxD / FRAG_SIZE);
-	
+
 	const TOTAL_VOLUME = (maxW - minW + 1) * (maxH - minH + 1) * (maxD - minD + 1); // Total volume of selected region in pixels
 	const FILES_NEEDED = (endFragW - startFragW + 1) * (endFragH - startFragH + 1) * (endFragD - startFragD + 1); // Total number of fragment files needed to be searched
-	
+
 	var stackSums = new Array(LINE_COUNT + 1).join('0').split('').map(parseFloat); // Creates empty array of zeroes to store sums of binary data for every line
 	var workersFinished = 0; // Keeps track of number of web workers finished parsing fragment data, will be used to determine when all files have successfully been read
-	
+
 	// Looping through all fragments needed to be searched
 	for(var d = startFragD; d <= endFragD; d++) {
 		for(var h = startFragH; h <= endFragH; h++) {
 			for(var w = startFragW; w <= endFragW; w++) {
 				var fragFile = 'res/ssBinaries/frag-' + w + '-' + h + '-' + d + '.bin'; // Getting URL of binary fragment file
-				
+
 				// Starting AJAX request to load binary data as an array
 				var xhr = new XMLHttpRequest();
 				xhr.open('GET', fragFile);
 				xhr.responseType = 'arraybuffer';
-				
+
 				// Function called when file is successfully loaded
 				// This uses the Web Workers API to speed up parsing of fragment files: https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API
 				xhr.onload = function(evt) {
 					var w = new Worker('js/searchFrag.js'); // Creating new Web Worker to parse data from a single fragment file, assigning it to run searchFrag.js
-					
+
 					// Telling worker what to do when it's finished running searchFrag.js
 					w.addEventListener('message', function(evt) {
 						var data = evt.data; // Getting results data returned from searchFrag.js (sums for all line volumes)
 						stackSums = stackSums.map(function(val, i) { return val + data[i] }); // Adding sums from this fragment's results to total results (map function adds values in both arrays with corresponding indices)
-						
+
 						// Destroying worker
 						w.terminate();
 						w = undefined;
-						
+
 						// Checking if all files are finished being read
 						workersFinished++;
 						if(workersFinished == FILES_NEEDED) {
 							continueSearch(stackSums, TOTAL_VOLUME); // Continuing search on completion
 						}
 					}, false);
-					
+
 					// Getting indices of current fragment from its file name
 					var url = evt.target.responseURL;
 					var urlParts = url.split('/');
 					var fileName = urlParts[urlParts.length - 1];
 					var fragTitle = fileName.split('.')[0];
 					var fragValues = fragTitle.split('-');
-					
+
 					// Index values
 					var thisW = parseInt(fragValues[1]);
 					var thisH = parseInt(fragValues[2]);
 					var thisD = parseInt(fragValues[3]);
-					
+
 					var message = [this.response, thisD, thisH, thisW, minW, maxW, minH, maxH, minD, maxD, LINE_COUNT, FRAG_SIZE, STACK_WIDTH, STACK_HEIGHT, STACK_DEPTH]; // Storing data to be used by worker in searchFrag.js
 					w.postMessage(message); // Telling worker to begin running searchFrag.js, given the provided data
 											// Note that this is called BEFORE the response function assigned by addEventListener() above
 				}
-				
+
 				xhr.send(); // Starting request to retrieve fragment file, note that this is called BEFORE the onload function above
 			}
 		}
@@ -587,13 +580,13 @@ function doSearch() {
 function continueSearch(stackSums, totalVolume) {
 	var percentages = stackSums.map(function(val) { return (val / totalVolume * 100).toFixed(2); }); // Creates array of percent volume occupancy for each line rounded to 2 decimal places
 	var pairs = []; // Array used to match line names to corresponding percentage values
-	
+
 	// Looping through all percentages (all lines)
 	$.each(percentages, function(i, val) {
 		if(val > 0) {
 			var thisID;
 			var thisName;
-			
+
 			// Finding ID for each percentage value using its array index
 			// See Python script for generating spatial search data to see how this order is determined
 			if(i == 0) { // HuC-Cer always first
@@ -612,18 +605,18 @@ function continueSearch(stackSums, totalVolume) {
 				thisID = MISC[i - GAL4.length - TRANSGENIC.length - 1 - CRE.length];
 				thisName = MISC_NAMES[i - GAL4.length - TRANSGENIC.length - 1 - CRE.length];
 			}
-			
+
 			// Adds new line name/percentage pair to pairs array
 			pairs.push({id:thisID, name:thisName, percentage:val});
 		}
 	});
-	
+
 	// Percentages are originally in the order they are stored in the binary fragment data
 	// This function sorts the name/percentage pairs in decreasing order by percentage values
 	pairs.sort(function(a, b) { return b.percentage - a.percentage; });
-	
+
 	var tableData = ''; // Stores HTML code to represent results data
-	
+
 	// Looping through all pairs
 	$.each(pairs, function(i, val) {
 		if(val.percentage > 0) { // Ignoring line in the results if it was not present in the selected region at all
@@ -634,7 +627,7 @@ function continueSearch(stackSums, totalVolume) {
 							'</tr>';
 		}
 	});
-	
+
 	$('#ss-table-body').html(tableData); // Appending results to table
 	resetSearch(); // Resetting spatial search values since search is now finished
 }
@@ -644,23 +637,23 @@ function resetSearch() {
 	firstAreaSelected = ''; // Window first selection was made in
 	spatialSearchOn = false; // Whether spatial search is currently being performed
 	firstPointsSet = false; // Deprecated value (unused)
-	
+
 	// Minimum and maximum coordinates of selection made (used only for yellow highlight boxes)
 	ssxp1x = -1;
 	ssxp1y = -1;
 	ssxp2x = -1;
 	ssxp2y = -1;
-	
+
 	ssyp1x = -1;
 	ssyp1y = -1;
 	ssyp2x = -1;
 	ssyp2y = -1;
-	
+
 	sszp1x = -1;
 	sszp1y = -1;
 	sszp2x = -1;
 	sszp2y = -1;
-	
+
 	// Minimum and maximum values of the search volume
 	xMin = 0;
 	xMax = 0;
@@ -668,13 +661,21 @@ function resetSearch() {
 	yMax = 0;
 	zMin = 0;
 	zMax = 0;
-	
+
 	// Re-enabling fullscreen and maximum projection buttons
 	$('.full-btn').prop('disabled', false);
 	$('.mp-btn').prop('disabled', false);
-	
-	// Resetting message text and showing "Start" button again
+
+	// Resetting message text and showing "Start" and "Reset" button again
 	$('#ss-message').css('display', 'none');
 	$('#ss-start-btn').css('display', 'initial');
+  $('#ss-reset-btn').css('display', 'inline-block');
 	$('#ss-message').text('');
+}
+
+// Clears the table and yellow boxes and removes "Reset" button
+function resetAll() {
+  $('#ss-table-body').html('');
+  toggleSSHighlighting(false);
+  $('#ss-reset-btn').css('display', 'none');
 }

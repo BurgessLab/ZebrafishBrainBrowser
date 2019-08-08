@@ -40,7 +40,7 @@ function popoverContent(func, params) { // The parameters passed identify which 
 					'<button class="btn btn-default color-picker picker-button" onclick="' + func + '(\'col-13\', ' + COL_13 + ', ' + params + ')"><span class="color-label col-13"></span></button>' +
 					'<button class="btn btn-default color-picker picker-button" onclick="' + func + '(\'col-14\', ' + COL_14 + ', ' + params + ')"><span class="color-label col-14"></span></button>' +
 					'<button class="btn btn-default color-picker picker-button" onclick="' + func + '(\'col-15\', ' + COL_15 + ', ' + params + ')"><span class="color-label col-15"></span></button>';
-	
+
 	return content;
 }
 
@@ -63,7 +63,7 @@ function changeSpanColor(spanID, spanColor) { // spanID contains the ID of the l
 	$('#' + spanID).removeClass('col-13');
 	$('#' + spanID).removeClass('col-14');
 	$('#' + spanID).removeClass('col-15');
-	
+
 	// Setting button's new color
 	$('#' + spanID).addClass(spanColor);
 }
@@ -75,20 +75,29 @@ function changeColor(spanColor, r, g, b, spanID, id) {
 	$('.' + id + '-volume-y').attr('baseColor', r + ' ' + g + ' ' + b);
 	$('.' + id + '-volume-z').attr('baseColor', r + ' ' + g + ' ' + b);
 	$('.' + id + '-volume-full').attr('baseColor', r + ' ' + g + ' ' + b);
-	
+
 	// Using Fire LUT if last color button was selected
 	var useFire = spanColor == 'col-15' ? 1.0 : 0.0;
 	$('.' + id + '-volume-x').attr('fire', useFire);
 	$('.' + id + '-volume-y').attr('fire', useFire);
 	$('.' + id + '-volume-z').attr('fire', useFire);
 	$('.' + id + '-volume-full').attr('fire', useFire);
-	
+
 	// Changing color button's background color
 	changeSpanColor(spanID, spanColor);
-	
+
+	//Finding color for color key
+	var invR = 255 - (r * 255);
+	var invG = 255 - (g * 255);
+	var invB = 255 - (b * 255);
+	var invert = "rgb(" + invR + ", " + invG + ", " + invB + ")";
+	var reg = "rgb(" + r * 255 + ", " + g * 255 + ", " + b * 255 + ")";
+	var colorKey = $('#invert-input').prop('checked') ? invert : reg;
+	$('#' + id + '-color-key').css('color', colorKey);
+
   // Save span color as an attribute
   $('#' + id + '-settings-header').attr('spanColor', spanColor);
-  
+
 	// Changing line name's text color to white for certain line colors (to better match background)
 	// Colors specified in the if-statement below will turn text white
 	if(spanColor == 'col-4' || spanColor == 'col-6' || spanColor == 'col-7' || spanColor == 'col-11' || spanColor == 'col-12' || spanColor == 'col-14' || spanColor == 'col-15') {

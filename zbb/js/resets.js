@@ -24,10 +24,10 @@ function resetOverall() {
 	// Turning off full anatomy
 	toggleFullAnatomy('z-brain', 'show-full-btn', false);
 	toggleFullAnatomy('pajevic', 'show-full-btn', false);
-	
+
 	// Turning off render of all anatomy
 	$('.anatomy-1-selectable-data, .anatomy-2-selectable-data').attr('render', 'false');
-	
+
 	// Setting active anatomy to z-brain
 	setActiveAnatomy('z-brain', 'active-anatomy-z-brain');
 	swapAnatomyPanels('z-brain');
@@ -55,7 +55,7 @@ function turnOnTransition() {
 	$('.display-window, .proj-window').css('-webkit-transition', 'width 0.5s, height 0.5s, top 0.5s, left 0.5s').css('transition', 'width 0.5s, height 0.5s, top 0.5s, left 0.5s');
 }
 
-// 
+//
 function showVolumeWindowAndSliders() {
 	$('#volume-window').css('display', 'block');
 	$('.slice-div').css('display', 'flex');
@@ -70,20 +70,21 @@ function showVolumeWindowAndSliders() {
 function resetAdvanced() {
   // Reset to fully-zoomed out
   resetZoomAll();
-  
-	$('#invert-input').prop('checked', false).change(); // Resetting color inversion
+
+	var inverted = $('#invert-input').prop('checked');
+	applyColorInversion(inverted, false); // Resetting color inversion
 	$('#volume-full-checkbox').prop('checked', true).change(); // Resetting show volume
-	
+
 	$('#line-show-checkbox').prop('checked', true).change(); // Resetting show line
 	changeResolution('res-btn-2560', 2560); // Resetting resolution (2560 is low res)
 	changeWindowSize('win-size-md', 65); // Resetting window size (65% is medium)
-	
+
 	// Resetting viewpoint in 3D volume view
 	var runtime;
 	if(runtime = $('#volume-window')[0].runtime) {
 		runtime.resetView();
 	}
-	
+
 	// Turning off maximum projections and clearing partial projection lines
 	toggleMaxProj(false, 'x', 0, 1);
 	toggleMaxProj(false, 'y', 0, 1);
@@ -91,10 +92,10 @@ function resetAdvanced() {
 	clearProjX();
 	clearProjY();
 	clearProjZ();
-	
+
 	$('#hide-annotations-checkbox').prop('checked', false).change(); // Resetting hide annotation button
 	$('#depth-code-projections-checkbox').prop('checked', false).change(); // Resetting depth coding
-	
+
 	// Shrinking fullscreened windows and resetting other windows
 	// xFull, yFull, zFull, and vFull are members of windows.js, where fullscreen operations are handled
 	if(xFull) {
@@ -114,18 +115,18 @@ function resetAdvanced() {
 		toggleFullscreen('volume');
 		showVolumeWindowAndSliders();
 	}
-	
+
 	// Turns fullscreen transition back on after everything has been reset
 	setTimeout(function() {
 		turnOnTransition();
 	}, 500); // This function is called after 500 milliseconds have passed
-	
+
 	// Resetting slicer inputs to midpoint
 	$('#x-input').val(0.5).trigger('input');
 	$('#y-input').val(0.5).trigger('input');
 	$('#z-input').val(0.5).trigger('input');
 	updateLines();
-	
+
 	// Turns all line visibility back on
 	resetToggles();
 }
@@ -136,7 +137,7 @@ function resetIndividual(id, creating) {
 	var brightness = 0;
 	var contrast = 1;
 	var threshold = 0;
-	
+
 	// Finding line's type and extracting its default values
 	// These values are set in data.js
 	if(includes(TRANSGENIC, id)) {
@@ -164,15 +165,15 @@ function resetIndividual(id, creating) {
 		contrast = HUC_CER_CONTRAST[0];
 		threshold = HUC_CER_THRESHOLD[0];
 	}
-	
+
 	// Resetting brightness and contrast inputs
 	$('#' + id + '-brightness-input').val(brightness).trigger('input');
 	$('#' + id + '-intensity-input').val(contrast).trigger('input');
-	
+
 	// Resetting threshold 3D volume opacity
 	changeVolumeAttrib(id, 'retainedOpacity', volumeOpacity);
 	changeIndividualAttrib(id, 'threshold', threshold);
-	
+
 	// Resetting color values
 	if(id == HUC_CER[0]) {
 		// Resetting HuC-Cer (and only HuC-Cer) to white

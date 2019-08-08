@@ -37,19 +37,36 @@ const GL_FUNC_ADD = 0x8006;
 // Turns color inversion of volumes on/off
 // This requires changing the blend function from additive blending to subtractive blending for all x3d windows https://developer.mozilla.org/en-US/docs/Web/API/WebGLRenderingContext/blendEquation
 // The glContexts are stored on load in x3dom-full-formatted.js
-function applyColorInversion(enabled) {
+function applyColorInversion(enabled, changed) {
 	// Setting the blend equation for all x3d windows (all glContexts)
-	for(var i = 0; i < glContexts.length; i++) {
+	for(var i = 0, j = 0; i < glContexts.length; i++) {
 		glContexts[i].blendEquation(enabled ? GL_FUNC_REVERSE_SUB : GL_FUNC_ADD); // Reverse-subtractive blending when inversion is on, additive blending when inversion is off
 	}
-	
+
 	volumeOpacity = enabled ? 0.5 : 3; // Decreasing volume opacity for 3D volumes when color inversion enabled, creates a more visibly-pleasing effect
-	
+
 	// Settings new opacity value for all 3D volumes currently being rendered
 	$.each(currRender, function(i, val) {
 		$('.' + val + '-volume-full').attr('retainedOpacity', volumeOpacity);
+
+		// Invert the color of the color key
+		if (changed) { //check to see if to invert the key or not
+			var color = parseColor($('#' + val + '-color-key').css('color'));
+			var red =  255 - parseInt(color[0], 10);
+			var green = 255 - parseInt(color[1], 10);
+			var blue = 255 - parseInt(color[2], 10);
+			var redgreenblue = "rgb(" + red + ", " + green + ", " + blue + ")";
+			$('#' + val + '-color-key').css('color', redgreenblue);
+		}
 	});
 }
+
+//Read the current color of the volume
+function parseColor(input) {
+	if(input == null) return;
+    return input.split("(")[1].split(")")[0].split(",");
+}
+
 
 // Initializes location and size of all x3d windows
 // This function was once more useful when layout options existed, but should now be left UNTOUCHED
@@ -63,64 +80,64 @@ function setLayout() {
 	$('#x-window, #proj-x-window').css('left', '62.58%');
 	$('#x-window, #proj-x-window').css('top', '0');
 	$('#x-window, #proj-x-window').css('clear', 'none');
-	
+
 	// Y window size and location
 	$('#y-window, #proj-y-window').css('width', '62.58%');
 	$('#y-window, #proj-y-window').css('height', '36.8095%');
 	$('#y-window, #proj-y-window').css('left', '0');
 	$('#y-window, #proj-y-window').css('top', '0');
 	$('#y-window, #proj-y-window').css('clear', 'left');
-	
+
 	// Z window size and location
 	$('#z-window, #proj-z-window').css('width', '62.58%');
 	$('#z-window, #proj-z-window').css('height', '53.988%');
 	$('#z-window, #proj-z-window').css('left', '0');
 	$('#z-window, #proj-z-window').css('top', '41.41075%');
 	$('#z-window, #proj-z-window').css('clear', 'left');
-	
+
 	// 3D volume window size and location
 	$('#volume-window').css('width', '37.42%');
 	$('#volume-window').css('height', '53.988%');
 	$('#volume-window').css('left', '62.58%');
 	$('#volume-window').css('top', '41.41075%');
 	$('#volume-window').css('clear', 'none');
-	
+
 	// X slice slider size and location
 	$('#slice-div-x').css('width', '37.42%');
 	$('#slice-div-x').css('height', '4.60125%');
 	$('#slice-div-x').css('left', '62.58%');
 	$('#slice-div-x').css('top', '36.8095%');
 	$('#slice-div-x').css('clear', 'none');
-	
+
 	// Y slice slider size and location
 	$('#slice-div-y').css('width', '62.58%');
 	$('#slice-div-y').css('height', '4.60125%');
 	$('#slice-div-y').css('left', '0');
 	$('#slice-div-y').css('top', '36.8095%');
 	$('#slice-div-y').css('clear', 'left');
-	
+
 	// Z slice slider size and location
 	$('#slice-div-z').css('width', '62.58%');
 	$('#slice-div-z').css('height', '4.60125%');
 	$('#slice-div-z').css('left', '0');
 	$('#slice-div-z').css('top', '95.39875%');
 	$('#slice-div-z').css('clear', 'left');
-	
+
 	// 3D volume slice slider size and location (has no slider but contains other components)
 	$('#slice-div-volume').css('left', '62.58%');
 	$('#slice-div-volume').css('top', '95.39875%');
 	$('#slice-div-volume').css('clear', 'none');
-	
+
 	// X Projection window location
 	$('#proj-x-window').css('left', '62.58%'); /* Based on x-window location */
 	$('#proj-x-window').css('top', '0');
 	$('#proj-x-window').css('clear', 'none');
-	
+
 	// Y Projection window location
 	$('#proj-y-window').css('left', '0'); /* Based on y-window location */
 	$('#proj-y-window').css('top', '0');
 	$('#proj-y-window').css('clear', 'left');
-	
+
 	// Z Projection window location
 	$('#proj-z-window').css('left', '0'); /* Based on z-window location */
 	$('#proj-z-window').css('top', '41.41075%');
@@ -136,29 +153,30 @@ function updateLines() {
   var yH = $('#y-window').height() * window.devicePixelRatio;
   var zW = $('#z-window').width() * window.devicePixelRatio;
   var zH = $('#z-window').height() * window.devicePixelRatio;
-  
+
 	// Getting coordinate of currently selected point in 3D space
 	// Calculated from slice slider value and total window size
 	var lineX = $('#x-input').val() * zW; // window.devicePixelRatio used because many browsers will automatically scale up element sizes for high-resolution screens, meaning width() and height() values would be incorrect
 	var lineY = (1 - $('#y-input').val()) * zH;
 	var lineZ = $('#z-input').val() * yH;
-  
+
   // Transform absolute coordinates to zoom/pan frustum coordinates (see zoom.js)
   var fovX = parseFloat($('#view-x').attr('fieldOfView'));
   var [xLineX, xLineY] = zoomTransform(lineY, lineZ, fovX, camXPos[0], camXPos[1], X_CAM_DIST, xW / (xFull ? 2.605 : 1), xH / (xFull ? 2.605 : 1), Y_SIZE, Z_SIZE, 1);
-  
+
   var fovY = parseFloat($('#view-y').attr('fieldOfView'));
   var [yLineX, yLineY] = zoomTransform(lineX, lineZ, fovY, camYPos[0], camYPos[1], Y_CAM_DIST, yW / (yFull ? 1.6025 : 1), yH, X_SIZE, Z_SIZE, 1);
-  
+
   var fovZ = parseFloat($('#view-z').attr('fieldOfView'));
   var [zLineX, zLineY] = zoomTransform(lineX, lineY, fovZ, camZPos[0], camZPos[1], Z_CAM_DIST, zW, zH, X_SIZE, Y_SIZE, 1);
-  
+
 	// Looping through all line volumes currently being rendered and updating crosshair locations
 	$.each(currRender, function(i, val) {
 		$('.' + val + '-volume-x').attr('lineLoc', (xLineX * (xFull ? 2.605 : 1)) + ' ' + ((yH - xLineY) * (xFull ? 2.605 : 1)) + ' 0'); // Multipliers applied for adjustments in fullscreen
 		$('.' + val + '-volume-y').attr('lineLoc', (yLineX * (yFull ? 1.6025 : 1)) + ' ' + (yH - yLineY) + ' 0');
 		$('.' + val + '-volume-z').attr('lineLoc', zLineX + ' ' + (zH - zLineY) + ' 0');
 	});
+
 }
 
 // Function called when moving a slice slider (underneath the volume windows)
@@ -172,15 +190,15 @@ function slide(id, value, direction) {
 	} else {
 		clampedValue = value;
 	}
-	
+
 	// Setting slice position for all currently-rendered lines in given window (x, y, or z)
 	$.each(currRender, function(i, val) {
 		$('.' + val + '-volume-' + id + ':not(.proj-' + id + ')').attr('positionLine', 0.5 - clampedValue / 2.0); // Mapping done to ensure positionLine is 0-0.5
 	});
-	
+
 	$('#transform-' + id).attr('translation', '0,0,' + ((clampedValue - 0.5) * direction)); // Moving camera position in given window, as changing the position line actually moves the slice back/forward in 3D space
 	updateLines(); // Updating blue crosshair line positions in all windows
-	
+
 	// Getting total number of slices to show in slice number display
 	// "slices" is hardcoded to total slices across given dimension (based on data dimensions)
 	// Projection lines are also cleared here, so brown projection lines will disappear when sliding through volume
@@ -195,18 +213,18 @@ function slide(id, value, direction) {
 		slices = 419;
 		clearProjZ();
 	}
-	
+
 	// Getting current slice number to show in slice number display
 	var sliceNum = parseInt(value * slices);
-	
+
 	// Setting text for corresponding slice number display
-	$('#slice-num-' + id).text(sliceNum + ' / ' + slices);
+	$('#slice-num-' + id).text(sliceNum);
 }
 
 // Turns on/off projection windows
 function togglePanels(type, show) {
 	var projOn;
-	
+
 	// Determining if projection is on for given type
 	if(type == 'x') {
 		projOn = xProjOn;
@@ -217,7 +235,7 @@ function togglePanels(type, show) {
 	} else {
 		projOn = false;
 	}
-	
+
 	// Turning off projection and turning on slicer window OR turning on projection and turning off slicer window
 	$('#' + type + '-window').css('display', (show && !projOn ? 'block' : 'none'));
 	$('#proj-' + type + '-window').css('display', (show && projOn ? 'block' : 'none'));
@@ -227,12 +245,17 @@ function togglePanels(type, show) {
 // Toggles fullscreen effect for specified window
 function toggleFullscreen(type) {
 	var madeFull;
-	
+
 	if(type == 'x') {
 		if(xFull) { // Checking if x window is already in fullscreen
 			setLayout(); // Changing back to original layout (all 4 windows)
 			changeOverallAttrib('renderLines', 0.0); // Turning off blue crosshairs during transition
-			
+
+
+			$('.color-keys').css('top','initial');
+			$('.color-keys').css('left','initial');
+			$('.color-keys').css('display', 'none');
+
 			// Function to be called after fullscreen transition has finished
 			setTimeout(function() {
 				if(!xFull) {
@@ -240,11 +263,13 @@ function toggleFullscreen(type) {
 					togglePanels('y', true);
 					togglePanels('z', true);
 					togglePanels('volume', true);
-					
+
 					updateLines(); // Updating blue crosshair lines
 					var checked = $('#line-show-checkbox').prop('checked');
 					changeOverallAttrib('renderLines', checked ? 1.0 : 0.0); // Showing lines again if "Show Lines" settings is enabled
-					
+
+					$('.color-keys').css('display', 'initial');
+
 					$('#x-window, #proj-x-window').addClass('border-left'); // Re-adding border to x windows
 				}
 			}, 500); // Time transition takes in milliseconds, should be same as transition time in layout.css
@@ -256,52 +281,63 @@ function toggleFullscreen(type) {
 			$('#x-window, #proj-x-window').css('height', '95.39875%');
 			$('#x-window, #proj-x-window').css('left', '1.5095%');
 			$('#x-window, #proj-x-window').css('top', '0');
-			
+
 			$('#x-window, #proj-x-window').removeClass('border-left'); // Removing x window border
-			
+
 			// Setting the size and location of the slice slider input (same height as before)
 			$('#slice-div-x').css('width', '96.981%');
 			$('#slice-div-x').css('height', '4.60125%');
 			$('#slice-div-x').css('top', '95.39875%');
 			$('#slice-div-x').css('left', '1.5095%');
-			
+
+			$('.color-keys').css('top', '0');
+			$('.color-keys').css('left', '1.5095%');
+			$('.color-keys').css('display','none');
+
 			// Turning off y, z, and 3D volume windows
 			togglePanels('y', false);
 			togglePanels('z', false);
 			togglePanels('volume', false);
-			
+
 			// Turning off blue crosshair lines during transition
 			changeOverallAttrib('renderLines', 0.0);
-			
+
 			// Function that occurs after fullscreen transition has finished
 			setTimeout(function() {
 				updateLines(); // Updating blue crosshair lines
 				var checked = $('#line-show-checkbox').prop('checked');
 				changeOverallAttrib('renderLines', checked ? 1.0 : 0.0); // Re-enabling crosshair lines if "Show Line" setting is enabled
+				$('.color-keys').css('display','initial');//re-enable color key
 			}, 500); // Function is called after 500 milliseconds, should be same as transition values in layout.css
 		}
-		
+
 		// Indicating whether x window was made fullscreen
 		xFull = !xFull;
 		madeFull = xFull;
-		
+
 		// Clearing brown partial projection lines
 		clearProjX();
 	} else if(type == 'y') { // Very similar to type = x, see comments above
 		if(yFull) {
 			setLayout();
 			changeOverallAttrib('renderLines', 0.0);
-			
+
+			$('.color-keys').css('top','initial');
+			$('.color-keys').css('left','initial');
+			$('.color-keys').css('display','none');
+
 			setTimeout(function() {
 				if(!yFull) {
 					togglePanels('x', true);
 					togglePanels('z', true);
 					togglePanels('volume', true);
-					
+
 					updateLines();
 					var checked = $('#line-show-checkbox').prop('checked');
 					changeOverallAttrib('renderLines', checked ? 1.0 : 0.0);
-					
+
+					$('.color-keys').css('display','initial');
+
 					$('#y-window, #proj-y-window').addClass('border-right');
 				}
 			}, 500);
@@ -310,27 +346,32 @@ function toggleFullscreen(type) {
 			$('#y-window, #proj-y-window').css('height', '58.82%');
 			$('#y-window, #proj-y-window').css('left', '0');
 			$('#y-window, #proj-y-window').css('top', '18.289375%');
-			
+
 			$('#y-window, #proj-y-window').removeClass('border-right');
-			
+
 			$('#slice-div-y').css('width', '100%');
 			$('#slice-div-y').css('height', '4.60125%');
 			$('#slice-div-y').css('top', '77.109375%');
 			$('#slice-div-y').css('left', '0');
-			
+
+			$('.color-keys').css('top', '18.289375%');
+			$('.color-keys').css('left', '0');
+			$('.color-keys').css('display','none');
+
 			togglePanels('x', false);
 			togglePanels('z', false);
 			togglePanels('volume', false);
-			
+
 			changeOverallAttrib('renderLines', 0.0);
-			
+
 			setTimeout(function() {
 				updateLines();
 				var checked = $('#line-show-checkbox').prop('checked');
 				changeOverallAttrib('renderLines', checked ? 1.0 : 0.0);
+				$('.color-keys').css('display','initial');
 			}, 500);
 		}
-		
+
 		yFull = !yFull;
 		madeFull = yFull;
 		clearProjY();
@@ -338,17 +379,22 @@ function toggleFullscreen(type) {
 		if(zFull) {
 			setLayout();
 			changeOverallAttrib('renderLines', 0.0);
-			
+
+			$('.color-keys').css('top','initial');
+			$('.color-keys').css('left','initial');
+			$('.color-keys').css('display','none');
+
 			setTimeout(function() {
 				if(!zFull) {
 					togglePanels('x', true);
 					togglePanels('y', true);
 					togglePanels('volume', true);
-					
+
 					updateLines();
 					var checked = $('#line-show-checkbox').prop('checked');
 					changeOverallAttrib('renderLines', checked ? 1.0 : 0.0);
-					
+
+					$('.color-keys').css('display','initial');
 					$('#z-window, #proj-z-window').addClass('border-right');
 				}
 			}, 500);
@@ -357,27 +403,32 @@ function toggleFullscreen(type) {
 			$('#z-window, #proj-z-window').css('height', '86.27037%');
 			$('#z-window, #proj-z-window').css('left', '0');
 			$('#z-window, #proj-z-window').css('top', '4.56419%');
-			
+
 			$('#z-window, #proj-z-window').removeClass('border-right');
-			
+
 			$('#slice-div-z').css('width', '100%');
 			$('#slice-div-z').css('height', '4.60125%');
 			$('#slice-div-z').css('top', '90.83456%');
 			$('#slice-div-z').css('left', '0');
-			
+
+			$('.color-keys').css('top', '4.56419%');
+			$('.color-keys').css('left', '0');
+			$('.color-keys').css('display','none');
+
 			togglePanels('x', false);
 			togglePanels('y', false);
 			togglePanels('volume', false);
-			
+
 			changeOverallAttrib('renderLines', 0.0);
-			
+
 			setTimeout(function() {
 				updateLines();
 				var checked = $('#line-show-checkbox').prop('checked');
 				changeOverallAttrib('renderLines', checked ? 1.0 : 0.0);
+				$('.color-keys').css('display','initial');
 			}, 500);
 		}
-		
+
 		zFull = !zFull;
 		madeFull = zFull;
 		clearProjZ();
@@ -385,17 +436,23 @@ function toggleFullscreen(type) {
 		if(vFull) {
 			setLayout();
 			changeOverallAttrib('renderLines', 0.0);
-			
+
+			$('.color-keys').css('top','initial');
+			$('.color-keys').css('left','initial');
+			$('.color-keys').css('display','none');
+
 			setTimeout(function() {
 				if(!vFull) {
 					togglePanels('x', true);
 					togglePanels('y', true);
 					togglePanels('z', true);
-					
+
 					updateLines();
 					var checked = $('#line-show-checkbox').prop('checked');
 					changeOverallAttrib('renderLines', checked ? 1.0 : 0.0);
-					
+
+					$('.color-keys').css('display','initial');
+
 					$('#volume-window').addClass('border-left');
 					$('#slice-div-volume').css('display', 'flex');
 				}
@@ -405,28 +462,33 @@ function toggleFullscreen(type) {
 			$('#volume-window').css('height', '100%');
 			$('#volume-window').css('left', '15.34415%');
 			$('#volume-window').css('top', '0');
-			
+
 			$('#volume-window').removeClass('border-left');
-			
+
 			$('#slice-div-volume').css('display', 'none');
-			
+
+			$('.color-keys').css('top', '0');
+			$('.color-keys').css('left', '15.34415%');
+			$('.color-keys').css('display','none');
+
 			togglePanels('x', false);
 			togglePanels('y', false);
 			togglePanels('z', false);
-			
+
 			changeOverallAttrib('renderLines', 0.0);
-			
+
 			setTimeout(function() {
 				updateLines();
 				var checked = $('#line-show-checkbox').prop('checked');
 				changeOverallAttrib('renderLines', checked ? 1.0 : 0.0);
+				$('.color-keys').css('display','initial');
 			}, 500);
 		}
-		
+
 		vFull = !vFull;
 		madeFull = vFull;
 	}
-	
+
 	updateSSVolumeAttribs(); // Updating spatial search yellow highlighted box values
 	$('#full-btn-img-' + type + ', #full-btn-img-proj-' + type).attr('src', 'res/' + (madeFull ? 'lessIcon' : 'fullIcon') + '.png'); // Changing icon image of fullscreen button
 }
@@ -456,19 +518,24 @@ function setRender(id, checkbox) {
 	if(checkbox.checked) {
 		toggleIndex = storeSelection(id);
 	}
-	
+	else {
+		removeSelection(id);
+		findIndex();
+	}
+
 	// Turning on corresponding alias checkboxes and spatial search checkboxes as well
 	$('#' + id + '-alias-checkbox').prop('checked', checkbox.checked);
 	$('.' + id + '-ss-checkbox').prop('checked', checkbox.checked);
-	
+
 	// Appending line settings and volumes HTML if the line has not been turned on before
 	var notIncluded = !includes(pushed, id);
 	if(notIncluded) {
 		appendSettings(id, toggleIndex);
+		findIndex();
 		appendProjections(id);
 		appendVolumes(id);
 	}
-	
+
 	if(checkbox.checked) {
 		// Adding and updating the current render list if line is toggled on
 		currRender.push(id);
@@ -477,29 +544,29 @@ function setRender(id, checkbox) {
 	} else {
 		// Removing line from current render if line is toggled off
 		var index = currRender.indexOf(id);
-		
+
 		if(index != -1) {
 			currRender.splice(index, 1);
 		}
 	}
-	
+
 	// Showing line's individual settings panel, see settingsView.js
 	showSettings(checkbox.checked, id);
-	
+
 	// Changes made if line has not previously been turned on
 	if(notIncluded) {
 		bindSliderAndNumberInputs(id); // Connecting the line's slider and number inputs
 		resetIndividual(id, true); // Resetting the line to default values (color, contrast, brightness, etc.), see resets.js
 		$('#' + id + '-color').attr('data-content', popoverContent('changeColor', '\'' + id + '-color-span\', \'' + id + '\'')); // Adding button selectors to color picker button's popover
 		$('[data-toggle="popover"]').popover(); // Enabling popover button
-		
+
 		pushed.push(id); // Pushing line ID to "pushed" so page knows not to append its data again
 	}
-	
+
 	// Updating blue crosshair lines and partial projection lines (where applicable)
 	updateLines();
 	updateProjMarkers();
-	
+
 	// Setting volume render attributes to true (X3DOM attribute)
 	$('.' + id + '-data').attr('render', checkbox.checked);
 }
@@ -524,6 +591,7 @@ function toggleAnnotations(checked) {
 	$('.full-btn').css('display', (checked ? 'none' : 'initial')); // Fullscreen buttons
 	$('.slice-num').css('display', (checked ? 'none' : 'initial')); // Current slice number displays
 	$('#vr-btn').css('display', (checked ? 'none' : 'initial')); // VR button
+	$('.color-keys').css('display', (checked ? 'none' : 'initial')); //Color key
 }
 
 // Turns full anatomy volumes on/off
@@ -535,7 +603,7 @@ function toggleFullAnatomy(type, btnID, enabled) {
 	} else if(type == 'pajevic') {
 		togglePajevic(enabled);
 	}
-	
+
 	// Hiding "Show Full" and displaying "Hide Full" button or vice-versa
 	$('.toggle-full-anatomy-btn').css('display', 'none');
 	$('#' + btnID).css('display', 'block');
@@ -548,7 +616,7 @@ function togglePajevic(enabled) {
 		var edgesIndex = currRender.indexOf('anatomy-1-edges');
 		if(edgesIndex != -1) { currRender.splice(edgesIndex, 1); }
 		$('.anatomy-1-edges-data').attr('render', 'false');
-		
+
 		currRender.push('anatomy-1-edges'); // Adding full anatomy volume to current render
 		updateCurrRender(); // Updating settings values for current render
 		$('.anatomy-1-edges-data').attr('render', 'true'); // Setting render to true for full anatomy
@@ -566,7 +634,7 @@ function toggleZbrain(enabled) {
 		var edgesIndex = currRender.indexOf('anatomy-2-edges');
 		if(edgesIndex != -1) { currRender.splice(edgesIndex, 1); }
 		$('.anatomy-2-edges-data').attr('render', 'false');
-		
+
 		currRender.push('anatomy-2-edges'); // Adding full anatomy volume to current render
 		updateCurrRender(); // Updating settings values for current render
 		$('.anatomy-2-edges-data').attr('render', 'true'); // Setting render to true for full anatomy
@@ -580,7 +648,7 @@ function toggleZbrain(enabled) {
 // Appends z-brain anatomical region based on 0-255 color value
 function appendRegionSelection(num) {
 	// Constructing volume HTML (X3DOM elements)
-	var xText = '<VolumeData class="anatomy-selection-' + num + '-data" dimensions="1 0.598058 0.407767" render="false">' + 
+	var xText = '<VolumeData class="anatomy-selection-' + num + '-data" dimensions="1 0.598058 0.407767" render="false">' +
 					'<ImageTextureAtlas class="anatomy-selection-' + num + '-atlas" containerField="voxels" url="res/anatomy/anatomy-2-sectors/anatomy-2-' + num + '_2560.png" numberOfSlices="100" slicesOverX="10" slicesOverY="10"></ImageTextureAtlas>' +
 					'<MPRVolumeStyle class="anatomy-selection-' + num + '-volume-x volume-x" isAnatomy="1.0" isEdges="1.0" originLine="1 0 0" finalLine="-1 0 0" positionLine="0.25" lineColor="0 1 1" markerColor="0.545 0.271 0.075"></MPRVolumeStyle>' +
 				'</VolumeData>';
@@ -596,13 +664,13 @@ function appendRegionSelection(num) {
 					'<ImageTextureAtlas class="anatomy-selection-' + num + '-atlas" containerField="voxels" url="res/anatomy/anatomy-2-sectors/anatomy-2-' + num + '_2560.png" numberOfSlices="100" slicesOverX="10" slicesOverY="10"></ImageTextureAtlas>' +
 					'<BoundaryEnhancementVolumeStyle class="anatomy-selection-' + num + '-volume-full volume-full" isAnatomy="1.0" retainedOpacity="10.0"></BoundaryEnhancementVolumeStyle>' +
 				'</VolumeData>';
-	
+
 	// Appending HTML to page
 	$('.anatomy-selection-x-container').append(xText);
 	$('.anatomy-selection-y-container').append(yText);
 	$('.anatomy-selection-z-container').append(zText);
 	$('.anatomy-selection-full-container').append(vText);
-	
+
 	// Indicating that this region has been added (so it's not appended again)
 	addedSelections.push(num);
 }
@@ -610,7 +678,7 @@ function appendRegionSelection(num) {
 // Appends pajevic anatomical region based on 0-255 color value
 function appendPajevicRegionSelection(num) {
 	// Constructing volume HTML (X3DOM elements)
-	var xText = '<VolumeData class="anatomy-pajevic-selection-' + num + '-data" dimensions="1 0.598058 0.407767" render="false">' + 
+	var xText = '<VolumeData class="anatomy-pajevic-selection-' + num + '-data" dimensions="1 0.598058 0.407767" render="false">' +
 					'<ImageTextureAtlas class="anatomy-pajevic-selection-' + num + '-atlas" containerField="voxels" url="res/anatomy/anatomy-1-sectors/anatomy-1-' + num + '_2560.png" numberOfSlices="100" slicesOverX="10" slicesOverY="10"></ImageTextureAtlas>' +
 					'<MPRVolumeStyle class="anatomy-pajevic-selection-' + num + '-volume-x volume-x" isAnatomy="1.0" isEdges="1.0" originLine="1 0 0" finalLine="-1 0 0" positionLine="0.25" lineColor="0 1 1" markerColor="0.545 0.271 0.075"></MPRVolumeStyle>' +
 				'</VolumeData>';
@@ -626,13 +694,13 @@ function appendPajevicRegionSelection(num) {
 					'<ImageTextureAtlas class="anatomy-pajevic-selection-' + num + '-atlas" containerField="voxels" url="res/anatomy/anatomy-1-sectors/anatomy-1-' + num + '_2560.png" numberOfSlices="100" slicesOverX="10" slicesOverY="10"></ImageTextureAtlas>' +
 					'<BoundaryEnhancementVolumeStyle class="anatomy-pajevic-selection-' + num + '-volume-full volume-full" isAnatomy="1.0" retainedOpacity="10.0"></BoundaryEnhancementVolumeStyle>' +
 				'</VolumeData>';
-	
+
 	// Appending HTML to page
 	$('.anatomy-pajevic-selection-x-container').append(xText);
 	$('.anatomy-pajevic-selection-y-container').append(yText);
 	$('.anatomy-pajevic-selection-z-container').append(zText);
 	$('.anatomy-pajevic-selection-full-container').append(vText);
-	
+
 	// Indicating that this region has been added (so it's not appended again)
 	addedPajevicSelections.push(num);
 }
@@ -640,47 +708,47 @@ function appendPajevicRegionSelection(num) {
 // Turns on/off a z-brain region volume
 function toggleRegionSelection(num, checkbox) {
   var checked = checkbox.checked;
-  
+
 	if(includes(EXISTING_ZBRAIN_SECTORS, num)) { // Checking to make sure number is valid color ID
 		if(checked) {
 			if(!includes(addedSelections, num)) {
 				appendRegionSelection(num); // Appending region volume if it hasn't been selected before
 			}
-			
+
 			currRender.push('anatomy-selection-' + num); // Adding to current render
 			$('.anatomy-selection-' + num + '-data').attr('render', 'true'); // Setting X3DOM render value to true
 			updateCurrRender(); // Updating settings values of current render
-      
+
       currentZbrainCheckboxes.push(checkbox.id);
 		} else {
 			// Removing anatomical selection from current render
 			var index = currRender.indexOf('anatomy-selection-' + num);
-			
+
 			if(index > -1) {
 				currRender.splice(index, 1);
 				$('.anatomy-selection-' + num + '-data').attr('render', 'false');
 			}
-      
+
       // Remove from currently-selected checkboxes
       var checkboxIndex = currentZbrainCheckboxes.indexOf(checkbox.id);
-      
+
       if(checkboxIndex > -1) {
         currentZbrainCheckboxes.splice(checkboxIndex, 1);
       }
 		}
 	}
-	
+
 	if(!currentAnatomyOnVR.includes(num) && checked) {
 		currentAnatomyOnVR.push(num); // Adding selection to VR list (so VR page knows which regions to load)
 	} else if(currentAnatomyOnVR.includes(num) && !checked) {
 		// Removing selection from VR list
 		var index = currentAnatomyOnVR.indexOf(num);
-		
+
 		if(index > -1) {
 			currentAnatomyOnVR.splice(index, 1);
 		}
 	}
-	
+
 	// Jumping to anatomical region's location
 	if(checked && REGION_LOC_X[num] != 0 && REGION_LOC_Y[num] != 0 && REGION_LOC_Z[num] != 0) { // Making sure region location is set
 		// Jumping to location by setting slider values
@@ -690,10 +758,10 @@ function toggleRegionSelection(num, checkbox) {
 		$('#z-input').val(REGION_LOC_Z[num]).trigger('input');
 		updateLines(); // Updating blue crosshair lines
 	}
-	
+
 	// Applying color inversion setting
 	var inverted = $('#invert-input').prop('checked');
-	applyColorInversion(inverted);
+	applyColorInversion(inverted, false);
 }
 
 // Turns on/off a pajevic region volume
@@ -701,67 +769,67 @@ function toggleRegionSelection(num, checkbox) {
 // See comments in function above for details
 function togglePajevicRegionSelection(num, checkbox) {
   var checked = checkbox.checked;
-  
+
 	if(includes(EXISTING_PAJEVIC_SECTORS, num)) {
 		if(checked) {
 			if(!includes(addedPajevicSelections, num)) {
 				appendPajevicRegionSelection(num);
 			}
-			
+
 			currRender.push('anatomy-pajevic-selection-' + num);
 			$('.anatomy-pajevic-selection-' + num + '-data').attr('render', 'true');
 			updateCurrRender();
-      
+
       currentPajevicCheckboxes.push(checkbox.id);
 		} else {
 			var index = currRender.indexOf('anatomy-pajevic-selection-' + num);
-			
+
 			if(index > -1) {
 				currRender.splice(index, 1);
 				$('.anatomy-pajevic-selection-' + num + '-data').attr('render', 'false');
 			}
-      
+
       // Remove from currently-selected checkboxes
       var checkboxIndex = currentPajevicCheckboxes.indexOf(checkbox.id);
-      
+
       if(checkboxIndex > -1) {
         currentPajevicCheckboxes.splice(checkboxIndex, 1);
       }
 		}
 	}
-	
+
 	var inverted = $('#invert-input').prop('checked');
-	applyColorInversion(inverted);
+	applyColorInversion(inverted, false);
 }
 
 // This function manages everything that happens when the X window is clicked, and is bound in ready.js
 function xBoxClicked(evt) {
 	toggleSSHighlighting(false); // Turning off yellow spatial search highlight box
-	
+
 	clearProjX(); // Clearing brown partial projection lines
-	
+
 	// Getting location of click
 	var bbox = evt.target.getBoundingClientRect();
-	
+
 	var pX = parseInt(evt.clientX - bbox.left);
 	var pY = parseInt(evt.clientY - bbox.top);
 	var boxW = $(evt.target).width();
 	var boxH = $(evt.target).height();
-	
+
 	// Normalizing location of click to 0-1
 	var posY = 1 - (pX / boxW);
 	var posZ = pY / boxH;
-	
+
   // Apply transformation accounting for zoom/pan frustum (see zoom.js)
   var fovX = parseFloat($('#view-x').attr('fieldOfView'));
   var [valY, valZ] = zoomInverseTransform(posY, posZ, fovX, camXPos[0], camXPos[1], X_CAM_DIST, Y_SIZE, Z_SIZE, 1, 1);
-  
+
 	// Adjust y and z slice locations (selection is made in x window)
 	$('#y-input').val(valY).trigger('input');
 	$('#z-input').val(valZ).trigger('input');
-	
+
 	updateLines(); // Updating blue crosshair lines
-	
+
 	// Determining which anatomy data to use based on which anatomy type is active
 	// This data can be found at the top of this file or in regions.js
 	var REGION_WIDTH;
@@ -771,7 +839,7 @@ function xBoxClicked(evt) {
 	var REGION_DATA;
 	var EXISTING_SECTORS;
 	var anatomyPath; // Used for building image file path
-	
+
 	if(activeAnatomy == 'z-brain') {
 		REGION_WIDTH = ZBRAIN_WIDTH;
 		REGION_HEIGHT = ZBRAIN_HEIGHT;
@@ -789,27 +857,27 @@ function xBoxClicked(evt) {
 		EXISTING_SECTORS = EXISTING_PAJEVIC_SECTORS;
 		anatomyPath = 'anatomy-1';
 	}
-	
+
 	// Getting click location relative to anatomy dimensions (from 0-1 to value in pixels)
 	var regionX = parseInt($('#x-input').val() * REGION_WIDTH);
 	var regionY = parseInt(posY * REGION_HEIGHT);
 	var regionZ = parseInt(posZ * REGION_DEPTH);
-	
+
 	if(regionX < REGION_WIDTH && regionY < REGION_HEIGHT && regionZ < REGION_DEPTH) { // Making sure selection isn't offscreen
 		var regionValue = REGION_DATA[regionZ][regionY][regionX]; // Getting numerical 0-255 region value
 		var region = REGION_MAP[regionValue]; // Getting name of region based on color value
-		
+
 		$('#region-info').text(region); // Updating region display below 3D volume window
-		
+
 		if(shiftHeld && includes(EXISTING_SECTORS, regionValue)) { // Checking if the user shift-clicked and an image file exists for the selected anatomy
 			$('.' + anatomyPath + '-selectable-atlas').attr('url', 'res/anatomy/' + anatomyPath + '-sectors/' + anatomyPath + '-' + regionValue + '_2560.png'); // Setting file path of selectable volume data to that of recently selected region
-			
+
 			// Adding selectable volume data to current render
 			if(!includes(currRender, anatomyPath + '-selectable')) {
 				$('.' + anatomyPath + '-selectable-data').attr('render', 'true');
 				currRender.push(anatomyPath + '-selectable');
 			}
-			
+
 			updateCurrRender(); // Updating settings for recently added anatomy
 		} else {
 			// Turning off any anatomy previously shown with shift-click
@@ -826,27 +894,27 @@ function xBoxClicked(evt) {
 // This function works very similarly to xBoxClicked(), see comments above
 function yBoxClicked(evt) {
 	toggleSSHighlighting(false);
-	
+
 	clearProjY();
-	
+
 	var bbox = evt.target.getBoundingClientRect();
-	
+
 	var pX = parseInt(evt.clientX - bbox.left);
 	var pY = parseInt(evt.clientY - bbox.top);
 	var boxW = parseInt(bbox.right - bbox.left);
 	var boxH = parseInt(bbox.bottom - bbox.top);
-	
+
 	var posX = pX / boxW;
 	var posZ = pY / boxH;
-	
+
   var fovY = parseFloat($('#view-y').attr('fieldOfView'));
   var [valX, valZ] = zoomInverseTransform(posX, posZ, fovY, camYPos[0], camYPos[1], Y_CAM_DIST, X_SIZE, Z_SIZE, -1, 1);
-  
+
 	$('#x-input').val(valX).trigger('input');
 	$('#z-input').val(valZ).trigger('input');
-	
+
 	updateLines();
-	
+
 	var REGION_WIDTH;
 	var REGION_HEIGHT;
 	var REGION_DEPTH;
@@ -854,7 +922,7 @@ function yBoxClicked(evt) {
 	var REGION_DATA;
 	var EXISTING_SECTORS;
 	var anatomyPath;
-	
+
 	if(activeAnatomy == 'z-brain') {
 		REGION_WIDTH = ZBRAIN_WIDTH;
 		REGION_HEIGHT = ZBRAIN_HEIGHT;
@@ -872,25 +940,25 @@ function yBoxClicked(evt) {
 		EXISTING_SECTORS = EXISTING_PAJEVIC_SECTORS;
 		anatomyPath = 'anatomy-1';
 	}
-	
+
 	var regionX = parseInt(posX * REGION_WIDTH);
 	var regionY = parseInt($('#y-input').val() * REGION_HEIGHT);
 	var regionZ = parseInt(posZ * REGION_DEPTH);
-	
+
 	if(regionX < REGION_WIDTH && regionY < REGION_HEIGHT && regionZ < REGION_DEPTH) {
 		var regionValue = REGION_DATA[regionZ][regionY][regionX];
 		var region = REGION_MAP[regionValue];
-		
+
 		$('#region-info').text(region);
-		
+
 		if(shiftHeld && includes(EXISTING_SECTORS, regionValue)) {
 			$('.' + anatomyPath + '-selectable-atlas').attr('url', 'res/anatomy/' + anatomyPath + '-sectors/' + anatomyPath + '-' + regionValue + '_2560.png');
-			
+
 			if(!includes(currRender, anatomyPath + '-selectable')) {
 				$('.' + anatomyPath + '-selectable-data').attr('render', 'true');
 				currRender.push(anatomyPath + '-selectable');
 			}
-			
+
 			updateCurrRender();
 		} else {
 			$('.' + anatomyPath + '-selectable-data').attr('render', 'false');
@@ -906,27 +974,27 @@ function yBoxClicked(evt) {
 // This function works very similarly to xBoxClicked(), see comments above
 function zBoxClicked(evt) {
 	toggleSSHighlighting(false);
-	
+
 	clearProjZ();
-	
+
 	var bbox = evt.target.getBoundingClientRect();
-	
+
 	var pX = parseInt(evt.clientX - bbox.left);
 	var pY = parseInt(evt.clientY - bbox.top);
 	var boxW = parseInt(bbox.right - bbox.left);
 	var boxH = parseInt(bbox.bottom - bbox.top);
-	
+
 	var posX = pX / boxW;
 	var posY = 1 - (pY / boxH);
-	
+
   var fovZ = parseFloat($('#view-z').attr('fieldOfView'));
   var [valX, valY] = zoomInverseTransform(posX, posY, fovZ, camZPos[0], camZPos[1], Z_CAM_DIST, X_SIZE, Y_SIZE, -1, -1);
-  
+
 	$('#x-input').val(valX).trigger('input');
 	$('#y-input').val(valY).trigger('input');
-	
+
 	updateLines();
-	
+
 	var REGION_WIDTH;
 	var REGION_HEIGHT;
 	var REGION_DEPTH;
@@ -934,7 +1002,7 @@ function zBoxClicked(evt) {
 	var REGION_DATA;
 	var EXISTING_SECTORS;
 	var anatomyPath;
-	
+
 	if(activeAnatomy == 'z-brain') {
 		REGION_WIDTH = ZBRAIN_WIDTH;
 		REGION_HEIGHT = ZBRAIN_HEIGHT;
@@ -952,33 +1020,188 @@ function zBoxClicked(evt) {
 		EXISTING_SECTORS = EXISTING_PAJEVIC_SECTORS;
 		anatomyPath = 'anatomy-1';
 	}
-	
+
 	var regionX = parseInt(posX * REGION_WIDTH);
 	var regionY = parseInt(posY * REGION_HEIGHT);
 	var regionZ = parseInt($('#z-input').val() * REGION_DEPTH);
-	
+
 	if(regionX < REGION_WIDTH && regionY < REGION_HEIGHT && regionZ < REGION_DEPTH) {
 		var regionValue = REGION_DATA[regionZ][regionY][regionX];
 		var region = REGION_MAP[regionValue];
-		
+
 		$('#region-info').text(region);
-		
+
 		if(shiftHeld && includes(EXISTING_SECTORS, regionValue)) {
 			$('.' + anatomyPath + '-selectable-atlas').attr('url', 'res/anatomy/' + anatomyPath + '-sectors/' + anatomyPath + '-' + regionValue + '_2560.png');
-			
+
 			if(!includes(currRender, anatomyPath + '-selectable')) {
 				$('.' + anatomyPath + '-selectable-data').attr('render', 'true');
 				currRender.push(anatomyPath + '-selectable');
 			}
-			
+
 			updateCurrRender();
 		} else {
 			$('.' + anatomyPath + '-selectable-data').attr('render', 'false');
 			var index = currRender.indexOf(anatomyPath + '-selectable');
-			
+
 			if(index > -1) {
 				currRender.splice(index, 1);
 			}
 		}
 	}
+}
+
+//Rotates the 3D volume around the X axis
+function rotateVolumeX() {
+	var degree = parseFloat($('#volumeRotate').attr('rotation').split(',')[3].substring(0,7));
+	//Stop
+	if ($('#rotateTime').attr('isActive')) {
+		$('#rotateTime').attr('set_stopTime', $.now()/1000);
+		degree = (degree + $('#rotateTime').attr('fraction_changed')*6.28317) % 6.28317;
+		$('#volumeRotate').attr('rotation', '1,0,0,'+degree);
+	}
+	//Start
+	else {
+		var keyVal = '1 0 0 '+degree%6.28317+'  1 0 0 '+(degree+1.57079)%6.28317+'  1 0 0 '+(degree+3.14159)%6.28317+'  1 0 0 '+(degree+4.71239)%6.28317+'  1 0 0 '+(degree+6.28317);
+		$('#orientationGuide').attr('keyValue', keyVal);
+		$('#rotateTime').attr('set_startTime', $.now()/1000);
+		$('#rotateTime').attr('set_loop', true);
+	}
+}
+
+//Rotates the 3D volume around the Y axis
+function rotateVolumeY() {
+	var rotation = parseFloat($('#volumeRotate').attr('rotation').split(',')[3].substring(0,7));
+	//Stop
+		if ($('#rotateTime').attr('isActive')) {
+			$('#rotateTime').attr('set_stopTime', $.now()/1000);
+			var degree = $('#rotateTime').attr('fraction_changed') * 6.28317;
+			var r =  degree+rotation % 6.28317;
+			$('#volumeRotate').attr('rotation', '0,1,0,' + r);
+		}
+		//Start
+		else {
+			var keyVal = '0 1 0 '+rotation%6.28317+'  0 1 0 '+(rotation+1.57079)%6.28317+'  0 1 0 '+(rotation+3.14159)%6.28317+'  0 1 0 '+(rotation+4.71239)%6.28317+'  0 1 0 '+(rotation+6.28317);
+			$('#orientationGuide').attr('keyValue', keyVal);
+			$('#rotateTime').attr('set_startTime', $.now()/1000);
+			$('#rotateTime').attr('set_loop', true);
+		}
+}
+
+//Rotates the 3D volume around the Z axis
+function rotateVolumeZ() {
+	var rotation = parseFloat($('#volumeRotate').attr('rotation').split(',')[3].substring(0,7));
+	//Start
+	if ($('#rotateTime').attr('isActive')) {
+		$('#rotateTime').attr('set_stopTime', $.now()/1000);
+		var degree = $('#rotateTime').attr('fraction_changed') * 6.28317;
+		var r =  degree+rotation % 6.28317;
+		$('#volumeRotate').attr('rotation', '0,0,1,' + r);
+	}
+	//Stop
+	else {
+		var keyVal = '0 0 1 '+rotation%6.28317+'  0 0 1 '+(rotation+1.57079)%6.28317+'  0 0 1 '+(rotation+3.14159)%6.28317+'  0 0 1 '+(rotation+4.71239)%6.28317+'  0 0 1 '+(rotation+6.28317);
+		$('#orientationGuide').attr('keyValue', keyVal);
+		$('#rotateTime').attr('set_startTime', $.now()/1000);
+		$('#rotateTime').attr('set_loop', true);
+	}
+}
+
+//Resets Rotation
+function rotateReset() {
+	$('#volumeRotate').attr('rotation', '0,0,0,0');
+	$('#rotateTime').attr('set_stopTime', $.now()/1000);
+	var runtime;
+	if(runtime = $('#volume-window')[0].runtime) {
+		runtime.resetView();
+	}
+}
+
+//Downloades Stack
+async function downloadStack() {
+	$('.download-buttons').attr('disabled', true);
+	var initial = $('#z-input').val();
+	await slideView(0);
+	await getImage('z-window');
+	if ($('#downloadWarning').text().length == 0) {
+		$('#downloadWarning').append("Downloading... DO NOT TOUCH ANYTHING");
+	}
+	else {
+		$('#downloadWarning').css('display', 'block');
+	}
+	var color = $('#invert-input').prop('checked') ? '#000000' : '#FFFFFF';
+	$('#downloadWarning').css('color', color);
+	changeOverallAttrib('renderLines', 0.0);
+	var zip = new JSZip();
+	for (let i = 1; i <= 419; i++) {
+		await slideView(i);
+		var url = await getImage('z-window');
+		url = url.substr(22, url.length);
+		var s = "00" + i;
+		zip.file('zbb-download/z-'+s.substr(s.length-3)+'.png', url, {base64: true});
+	}
+	changeOverallAttrib('renderLines',  $('#line-show-checkbox').prop('checked') ? 1.0 : 0.0);
+	slide('z', initial, -1);
+	zip.generateAsync({type:"blob"})
+	.then(function (blob) {
+	    saveAs(blob, "download.zip");
+	});
+	$('#downloadWarning').css('display', 'none');
+	$('.download-buttons').attr('disabled', false);
+	zip = null;
+}
+
+//Downloads Views
+async function downloadView() {
+	$('.download-buttons').attr('disabled', true);
+	if ($('#downloadWarning').text().length == 0) {
+		$('#downloadWarning').append("Downloading... DO NOT TOUCH ANYTHING");
+	}
+	else {
+		$('#downloadWarning').css('display', 'block');
+	}
+	var color = $('#invert-input').prop('checked') ? '#000000' : '#FFFFFF';
+	$('#downloadWarning').css('color', color);
+	changeOverallAttrib('renderLines', 0.0);
+	var zip = new JSZip();
+	setTimeout(async function() {
+		var zwindow = await getImage('z-window');
+		zwindow = zwindow.substr(22, zwindow.length);
+		var xwindow = await getImage('x-window');
+		xwindow = xwindow.substr(22, xwindow.length);
+		var ywindow = await getImage('y-window');
+		ywindow = ywindow.substr(22, ywindow.length);
+		var volwindow = await getImage('volume-window');
+		volwindow = volwindow.substr(22, volwindow.length);
+		zip.file('zbb-download-view/horizontal.png', zwindow, {base64: true});
+		zip.file('zbb-download-view/coronal.png', xwindow, {base64: true});
+		zip.file('zbb-download-view/sagittal.png', ywindow, {base64: true});
+		zip.file('zbb-download-view/3d.png', volwindow, {base64: true});
+		changeOverallAttrib('renderLines',  $('#line-show-checkbox').prop('checked') ? 1.0 : 0.0);
+		zip.generateAsync({type:"blob"})
+		.then(function (blob) {
+		    saveAs(blob, "download.zip");
+		});
+		$('#downloadWarning').css('display', 'none');
+		$('.download-buttons').attr('disabled', false);
+		zip = null;
+	}, 30);
+}
+
+//Slides to next frame
+function slideView(i) {
+	return new Promise(resolve => {
+		slide('z', i/419, -1);
+		setTimeout(() => {
+      resolve();
+    }, 30);
+	});
+}
+
+//Takes a screenshot
+function getImage(view) {
+	return new Promise(resolve => {
+		var url = $('#'+view)[0].runtime.getScreenshot();
+		resolve(url);
+	});
 }

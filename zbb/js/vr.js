@@ -24,58 +24,41 @@ function launchVR() {
 	var contrasts = [];
 	var brightnesses = [];
 	var regions = [];
-	
+
 	// Looping through all the IDs currently being rendered
 	for(var i = 0; i < currRender.length; i++) {
 		var line = currRender[i];
-		
+
 		// Checking to make sure the ID is a line ID
 		if(line == HUC_CER[0] || includes(TRANSGENIC, line) || includes(CRE, line) || includes(GAL4, line) || includes(MISC, line)) {
 			// Saving line name
 			linesOn.push(line);
-			
+
 			// Saving color
 			var color = $('.' + line + '-volume-full').attr('baseColor');
 			colors.push(color);
-			
+
 			// Saving contrast
 			var contrast = $('.' + line + '-volume-full').attr('renderIntensity');
-			contrasts.push(contrast);
-			
+			contrasts.push(contrast *1.5);
+
 			// Saving brightness
 			var brightness = $('.' + line + '-volume-full').attr('brightness');
-			brightnesses.push(brightness);
+			brightnesses.push(brightness * 1.5);
 		}
 	}
-	
+
 	// Saves all currently selected anatomical regions in regions array
 	for(var i = 0; i < currentAnatomyOnVR.length; i++) {
 		regions.push(currentAnatomyOnVR[i]);
 	}
-	
-	if(linesOn.length > MAX_LINES) { // Checking if number of selected lines exceeds maximum recommended number
-		// Warning popup to confirm user wants to continue to VR page with more than recommended number
-		var ok = confirm('The recommended maximum number of selected lines is ' + MAX_LINES + '. Press "OK" to continue anyway.');
-		
-		// Continuing to VR page anyway if user selects "OK"
-		if(ok) {
-			// Saving arrays to local memory, localStorage information can be found here: https://www.w3schools.com/html/html5_webstorage.asp
-			// JSON.stringify() is used to convert arrays to JSON strings, as localStorage can only save data in string format
-			// JSON strings can easily be parsed back into arrays on the VR page
-			localStorage.setItem('ids', JSON.stringify(linesOn));
-			localStorage.setItem('colors', JSON.stringify(colors));
-			localStorage.setItem('contrasts', JSON.stringify(contrasts));
-			localStorage.setItem('brightnesses', JSON.stringify(brightnesses));
-			localStorage.setItem('regions', JSON.stringify(regions));
-			linkToVR(); // Opening VR page in new window
-		}
-	} else {
-		// Same as above
-		localStorage.setItem('ids', JSON.stringify(linesOn));
-		localStorage.setItem('colors', JSON.stringify(colors));
-		localStorage.setItem('contrasts', JSON.stringify(contrasts));
-		localStorage.setItem('brightnesses', JSON.stringify(brightnesses));
-		localStorage.setItem('regions', JSON.stringify(regions));
-		linkToVR(); // Opening VR page in new window
-	}
+	// Saving arrays to local memory, localStorage information can be found here: https://www.w3schools.com/html/html5_webstorage.asp
+	// JSON.stringify() is used to convert arrays to JSON strings, as localStorage can only save data in string format
+	// JSON strings can easily be parsed back into arrays on the VR page
+	localStorage.setItem('ids', JSON.stringify(linesOn));
+	localStorage.setItem('colors', JSON.stringify(colors));
+	localStorage.setItem('contrasts', JSON.stringify(contrasts));
+	localStorage.setItem('brightnesses', JSON.stringify(brightnesses));
+	localStorage.setItem('regions', JSON.stringify(regions));
+	linkToVR(); // Opening VR page in new window
 }
