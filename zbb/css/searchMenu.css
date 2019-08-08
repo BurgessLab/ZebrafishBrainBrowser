@@ -21,10 +21,16 @@
 	margin-bottom: 10px;
 }
 
-/* Zoom warning label */
-#ss-zoom-disabled {
-  display: none;
+/* Reset Button */
+#ss-reset-btn {
+	margin-bottom: 10px;
 }
+
+/* To do and warning messages */
+#ss-message {
+	white-space: pre-line;
+}
+
 
 /*
  * Text search
@@ -48,7 +54,6 @@
 	background-repeat: no-repeat;
 	background-position: center;
 }
-
 /*
  * Deprecated (unused)
  */

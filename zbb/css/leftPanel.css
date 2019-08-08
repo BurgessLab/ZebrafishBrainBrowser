@@ -55,6 +55,18 @@
 	right: 22px;
 }
 
+#rotate-axis-button {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	user-drag: none;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-drag: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+}
+
 /* Fullscreen buttons */
 .full-btn {
 	position: absolute;
@@ -118,6 +130,7 @@
 
 .slice-num {
 	position: absolute;
+	font-size: 10px;
 	margin: 0;
 	left: 0;
 	bottom: 0;
@@ -128,6 +141,13 @@
 	margin-left: 5px; /* A small margin is applied to the x window slice number to prevent is from going offscreen */
 }
 
+#downloadWarning {
+	position: absolute;
+	font-size: 10px;
+	margin: 0;
+	right: 0;
+	bottom: 0;
+}
 /*
  * The following styling affects the reported region info below the 3D volume window
  */
@@ -136,4 +156,23 @@
 	color: white;
 	margin: auto 10px;
 	font-size: 12px;
+}
+
+/* The following effects the color keys on the top left
+*/
+.color-keys {
+	position: absolute;
+	top: 0;
+	left: 0;
+	margin: auto 2px;
+	width: 80px;
+	height: 86px;
+	overflow-y: hidden;
+}
+
+.individual-color-key {
+	text-align: left;
+	margin-top: 0em;
+  margin-bottom: 0em;
+	font-size: 10px;
 }

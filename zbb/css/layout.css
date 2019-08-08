@@ -77,14 +77,51 @@
 
 /* Top row of buttons */
 .nav-btn {
-	width: 33.333%;
+	width: 25%;
 	float: left;
+	font-size: 13px;
 }
 
 /* Bottom row of buttons */
 .nav-btn-2 {
-	width: 33.333%;
+	width: 25%;
 	float: left;
+	font-size: 13px;
+}
+
+/*
+Help Buttons/Text
+*/
+.help-btn {
+	position: absolute;
+	height: 23px;
+	right: 6px;
+	top: 6px;
+	margin: 0px;
+	display: none;
+}
+
+#help-btn-views {
+	right: 0;
+	bottom: 0;
+	top: auto;
+}
+
+#help-btn-3d {
+	left: 0;
+	right: auto;
+	top: auto;
+	bottom: 0;
+}
+
+#help-btn-control {
+	top: 10px;
+	right: 47%;
+	z-index: 2;
+}
+
+#help-text {
+	margin-top: 9%;
 }
 
 /*
