@@ -120,6 +120,14 @@ Help Buttons/Text
 	z-index: 2;
 }
 
+#help-btn-about {
+	position: absolute;
+	height: 23px;
+	right: 6px;
+	top: 6px;
+	margin: 0px;
+}
+
 #help-text {
 	margin-top: 9%;
 }
